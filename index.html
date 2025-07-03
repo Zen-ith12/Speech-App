@@ -20,16 +20,11 @@
 </head>
 <body>
   <h1>JW Speech</h1>
-</body>
-</html>
-<script>
+  <script>
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('./service-worker.js')
-      .then(function(reg) {
-        console.log('✅ Service Worker registrado:', reg.scope);
-      })
-      .catch(function(error) {
-        console.error('❌ Error al registrar el Service Worker:', error);
-      });
+      .then(reg => console.log('✅ Service Worker registrado:', reg.scope))
+      .catch(err => console.error('❌ Error al registrar el Service Worker:', err));
   }
 </script>
+</body>
