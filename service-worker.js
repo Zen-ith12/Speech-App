@@ -14,9 +14,9 @@ self.addEventListener('install', function(event) {
       return cache.addAll(urlsToCache);
     })
   );
-});
+}); 
 
-// Activar y limpiar cachés antiguas si las hay
+// Activar y limpiar cachés antiguas
 self.addEventListener('activate', function(event) {
   event.waitUntil(
     caches.keys().then(function(cacheNames) {
@@ -28,13 +28,14 @@ self.addEventListener('activate', function(event) {
         })
       );
     })
-  );
-}); 
 
-// Interceptar solicitudes y responder con caché o red
+    );
+});
+
+// Interceptar solicitudes
 self.addEventListener('fetch', function(event) {
-  event.respondWith(
-    caches.match(event.request).then(function(response) {
+  event.respondWith( 
+caches.match(event.request).then(function(response) {
       return response || fetch(event.request);
     })
   );
