@@ -2,29 +2,121 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <link rel="manifest" href="manifest.json" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>JW Speech</title>
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#121212" />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap" rel="stylesheet" />
   <style>
     body {
       background-color: #121212;
       color: #f0f0f0;
-      font-family: 'Noto Sans', 'Segoe UI', sans-serif;
-      margin: 0;
+      font-family: 'Noto Sans', sans-serif;
       padding: 1rem;
       max-width: 600px;
-      margin: auto; 
+      margin: auto;
     }
-    h1 { text-align: center; }
+    h1, h2 {
+      text-align: center;
+    }
+    input, textarea, button {
+      width: 100%;
+      margin: 0.5rem 0;
+      padding: 0.5rem;
+      border-radius: 5px;
+      border: none;
+      font-size: 1rem;
+      box-sizing: border-box;
+    }
+    textarea {
+      height: 120px;
+      resize: vertical;
+    }
+    button {
+      background-color: #00aaff;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #008ecc;
+    }
+    .discurso {
+      background-color: #1e1e1e;
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      white-space: pre-wrap;
+    }
+    .delete-btn {
+      background-color: crimson;
+      margin-top: 0.5rem;
+    }
   </style>
 </head>
 <body>
-  <h1>JW Speech</h1>
+    <h1>JW Speech</h1>
+
+  <h2>Agregar discurso</h2>
+  <input id="titulo" type="text" placeholder="Título del discurso" />
+  <textarea id="contenido" placeholder="Contenido del discurso"></textarea>
+  <button onclick="guardarDiscurso()">Guardar</button>
+
+  <h2>Mis discursos</h2>
+  <div id="listaDiscursos"></div>
+
   <script>
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('./service-worker.js')
-      .then(reg => console.log('✅ Service Worker registrado:', reg.scope))
-      .catch(err => console.error('❌ Error al registrar el Service Worker:', err));
+    // Registro del service worker
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./service-worker.js')
+        .then(reg => console.log('✅ Service Worker registrado:', reg.scope))
+        .catch(err => console.error('❌ Error al registrar el Service Worker:', err));
+    }
+function guardarDiscurso() {
+      const titulo = document.getElementById('titulo').value.trim();
+      const contenido = document.getElementById('contenido').value.trim();
+      if (!titulo || !contenido) {
+        alert("Por favor completa el título y el contenido.");
+        return;
+      }
+
+      const discursos = JSON.parse(localStorage.getItem('discursos') || '[]');
+      discursos.push({ titulo, contenido, fecha: new Date().toISOString() });
+      localStorage.setItem('discursos', JSON.stringify(discursos));
+
+      document.getElementById('titulo').value = '';
+      document.getElementById('contenido').value = '';
+      mostrarDiscursos();
   }
-</script>
+
+    function mostrarDiscursos() {
+      const lista = document.getElementById('listaDiscursos');
+      lista.innerHTML = '';
+      const discursos = JSON.parse(localStorage.getItem('discursos') || '[]');
+      discursos.slice().reverse().forEach((d, i) => {
+        const div = document.createElement('div');
+        div.className = 'discurso';
+        div.innerHTML = `
+          <h3>${d.titulo}</h3>
+          <p>${d.contenido.replace(/\n/g, '<br>')}</p>
+          <small>${new Date(d.fecha).toLocaleString()}</small>
+          <button class="delete-btn" onclick="eliminarDiscurso(${discursos.length - 1 - i})">Eliminar</button>
+        `;
+        lista.appendChild(div); 
+        });
+    }
+
+    function eliminarDiscurso(index) {
+      if (!confirm("¿Seguro que quieres eliminar este discurso?")) return;
+      const discursos = JSON.parse(localStorage.getItem('discursos') || '[]');
+      discursos.splice(index, 1);
+      localStorage.setItem('discursos', JSON.stringify(discursos));
+      mostrarDiscursos();
+    }
+
+    // Mostrar discursos al cargar
+    mostrarDiscursos();
+  </script>
 </body>
+</html>
