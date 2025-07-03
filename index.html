@@ -1,263 +1,195 @@
 <!DOCTYPE html>
+
 <html lang="es">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>JW Speech</title>
-  <meta name="theme-color" content="#121212" />
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap" rel="stylesheet" />
-  <style>
-    body {
-      background-color: #121212;
-      color: #f0f0f0;
-      font-family: 'Noto Sans', sans-serif;
-      padding: 1rem;
-      max-width: 600px;
-      margin: auto;
-      font-size: var(--tamanio-letra, 16px); 
-      }
-    h1, h2 {
-      text-align: center;
-    }
-    input, textarea, select, button {
-      width: 100%;
-      margin: 0.5rem 0;
-      padding: 0.5rem;
-      border-radius: 5px;
-      border: none;
-      font-size: 1rem;
-      box-sizing: border-box;
-    }
-    textarea {
-      height: 120px;
-      resize: vertical;
-    }
-    button {
-      background-color: #00aaff;
-      color: white;
-      font-weight: bold;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-    }
-    button:hover {
-      background-color: #008ecc;
-    }
-    .discurso {
-      background-color: #1e1e1e;
-      padding: 1rem;
-      border-radius: 8px;
-      margin-bottom: 1rem;
-      white-space: pre-wrap;
-    }
-    .delete-btn {
-      background-color: crimson;
-      margin-top: 0.5rem;
-    }
-  </style>
-</head>
-<body>
-  <h1>JW Speech</h1>
 
-  <div style="text-align:center;">
-    <label>Tamaño de letra:
-      <button onclick="cambiarTamanio('aumentar')">A+</button>
-      <button onclick="cambiarTamanio('reducir')">A−</button>
-    </label>
-    <br/>
-    <label>Fuente:
-      <select onchange="cambiarFuente(this.value)">
-        <option value="'Noto Sans', sans-serif">Noto Sans</option>
-        <option value="'Arial', sans-serif">Arial</option>
-        <option value="'Georgia', serif">Georgia</option>
-        <option value="'Courier New', monospace">Courier</option>
-      </select>
-    </label>
-  </div>
+<meta charset="UTF-8" />
 
-<h2>Agregar discurso</h2>
-  <input id="titulo" type="text" placeholder="Título del discurso" />
-  <select id="categoria">
-    <option value="Publicos">Discursos Públicos</option>
-    <option value="Tesoros">Tesoros de la Biblia</option> 
-    <option value="Congregacion">Discursos para Necesidades de la Congregación</option>
-    <option value="Asamblea">Discursos Asamblea</option>
-    <option value="FuneralMatrimonio">Discurso Funeral y Matrimonio</option>
-  </select>
-  <textarea id="contenido" placeholder="Contenido del discurso"></textarea>
-  <button id="guardarBtn" onclick="guardarDiscurso()">Guardar</button>
-  <button id="actualizarBtn" onclick="actualizarDiscurso()" style="display:none;">Actualizar</button>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <h2>Mis discursos</h2>
-  <div id="listaDiscursos"></div>
+<title>JW Speech</title>
 
-  <script>
-    let fontSize = 16;
-    function cambiarTamanio(accion) {
-      if (accion === 'aumentar') fontSize += 2;
-      else if (accion === 'reducir') fontSize = Math.max(12, fontSize - 2);
-      document.documentElement.style.setProperty('--tamanio-letra', fontSize + 'px');
-    }
-
-    function cambiarFuente(fuente) {
-      document.body.style.fontFamily = fuente;
-    }
-
-    let editIndex = -1; // índice del discurso que se está editando
-
-    function guardarDiscurso() {
-      const titulo = document.getElementById('titulo').value.trim();
-      const contenido = document.getElementById('contenido').value.trim();
-      const categoria = document.getElementById('categoria').value;
-      if (!titulo || !contenido) {
-        alert("Por favor completa el título y el contenido.");
-        return;
-      }
-      const discursos = JSON.parse(localStorage.getItem('discursos') || '[]');
-      discursos.push({ titulo, contenido, categoria, fecha: new Date().toISOString() });
-      localStorage.setItem('discursos', JSON.stringify(discursos));
-      limpiarFormulario();
-      mostrarDiscursos();
-    }
-
-    function editarDiscursoPorTitulo(titulo, categoria, fecha) {
-      const discursos = JSON.parse(localStorage.getItem('discursos') || '[]');
-      const index = discursos.findIndex(d => d.titulo === titulo && d.categoria === categoria && d.fecha === fecha);
-      if (index === -1) return alert("Discurso no encontrado.");
-      const d = discursos[index];
-      document.getElementById('titulo').value = d.titulo;
-      document.getElementById('contenido').value = d.contenido;
-      document.getElementById('categoria').value = d.categoria;
-      editIndex = index;
-      document.getElementById('guardarBtn').style.display = 'none';
-      document.getElementById('actualizarBtn').style.display = 'inline-block';
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-
-    function actualizarDiscurso() {
-      const titulo = document.getElementById('titulo').value.trim();
-      const contenido = document.getElementById('contenido').value.trim();
-      const categoria = document.getElementById('categoria').value;
-      if (!titulo || !contenido) {
-        alert("Por favor completa el título y el contenido.");
-        return;
-      }
-      const discursos = JSON.parse(localStorage.getItem('discursos') || '[]');
-      discursos[editIndex] = { titulo, contenido, categoria, fecha: new Date().toISOString() };
-      localStorage.setItem('discursos', JSON.stringify(discursos));
-      editIndex = -1;
-      limpiarFormulario();
-      mostrarDiscursos();
-      document.getElementById('guardarBtn').style.display = 'inline-block';
-      document.getElementById('actualizarBtn').style.display = 'none';
-    }
-
-    function limpiarFormulario() {
-      document.getElementById('titulo').value = '';
-      document.getElementById('contenido').value = '';
-      document.getElementById('categoria').value = 'Publicos';
-    }
-
-    function eliminarDiscursoPorTitulo(titulo, categoria, fecha) {
-      if (!confirm("¿Seguro que quieres eliminar este discurso?")) return;
-      let discursos = JSON.parse(localStorage.getItem('discursos') || '[]');
-      discursos = discursos.filter(d => !(d.titulo === titulo && d.categoria === categoria && d.fecha === fecha));
-      localStorage.setItem('discursos', JSON.stringify(discursos));
-      mostrarDiscursos();
-    }
-
-    function exportarDiscursoPorTitulo(titulo, categoria, fecha) {
-      const discursos = JSON.parse(localStorage.getItem('discursos') || '[]');
-      const d = discursos.find(d => d.titulo === titulo && d.categoria === categoria && d.fecha === fecha);
-      if (!d) return alert("Discurso no encontrado.");
-      const contenido = `Título: ${d.titulo}\\nCategoría: ${d.categoria}\\nFecha: ${new Date(d.fecha).toLocaleString()}\\n\\n${d.contenido}`;
-      const blob = new Blob([contenido], { type: 'text/plain;charset=utf-8' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `${d.titulo.replace(/\\s+/g, '_')}.txt`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-    }
-
-    function verSoloLecturaPorTitulo(titulo, categoria, fecha) {
-      const discursos = JSON.parse(localStorage.getItem('discursos') || '[]');
-      const d = discursos.find(d => d.titulo === titulo && d.categoria === categoria && d.fecha === fecha);
-      if (!d) return alert("Discurso no encontrado.");
-      const url = window.URL.createObjectURL(new Blob([`
-<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<title>Vista solo lectura: ${d.titulo}</title>
 <style>
-  body { background: #121212; color: #f0f0f0; font-family: 'Noto Sans', sans-serif; padding: 2rem; max-width: 700px; margin: auto; white-space: pre-wrap; line-height: 1.6; }
-  h1 { text-align: center; margin-bottom: 0.3rem; }
-  small { display: block; text-align: center; margin-bottom: 1rem; color: #aaa; }
+
+body {
+
+background-color: #121212;
+
+color: #f0f0f0;
+
+font-family: 'Segoe UI', sans-serif;
+
+padding: 1rem;
+
+max-width: 800px;
+
+margin: auto;
+
+}
+
+input, textarea, select, button {
+
+width: 100%;
+
+margin: 0.5rem 0;
+
+padding: 0.5rem;
+
+font-size: 1rem;
+
+border: none;
+
+border-radius: 4px;
+
+}
+
+textarea {
+
+height: 250px;
+
+}
+
+button {
+
+background-color: #1e88e5;
+
+color: white;
+
+cursor: pointer;
+
+}
+
+.discurso {
+
+background-color: #1e1e1e;
+
+padding: 1rem;
+
+margin: 1rem 0;
+
+border-radius: 8px;
+
+}
+
+.delete-btn {
+
+background-color: crimson;
+
+}
+
 </style>
+
 </head>
+
 <body>
-  <h1>${d.titulo}</h1>
-  <small>Categoría: ${d.categoria}</small>
-  <small>Fecha: ${new Date(d.fecha).toLocaleString()}</small>
-  <hr />
-  <div>${d.contenido.replace(/\\n/g, '<br>')}</div>
-</body>
-</html>
-      `], { type: 'text/html' }));
-      window.open(url, '_blank');
-    }
 
-    function mostrarDiscursos() {
-      const lista = document.getElementById('listaDiscursos');
-      lista.innerHTML = '';
-      const discursos = JSON.parse(localStorage.getItem('discursos') || '[]');
+<h1>JW Speech</h1>
 
-      // Agrupar por categoría
-      const categorias = {};
-      discursos.forEach(d => {
-        if (!categorias[d.categoria]) categorias[d.categoria] = [];
-        categorias[d.categoria].push(d);
-      });
 
-      // Mostrar por categoría
-      for (const cat in categorias) {
-        const catDiv = document.createElement('div');
-        const catTitulo = document.createElement('h2');
+<input id="search" type="text" placeholder="Buscar discursos..." oninput="mostrarDiscursos()" />
 
-        let nombreCat = '';
-        switch(cat) {
-          case 'Publicos': nombreCat = 'Discursos Públicos'; break;
-          case 'Asamblea': nombreCat = 'Discursos Asamblea'; break;
-          case 'FuneralMatrimonio': nombreCat = 'Discurso Funeral y Matrimonio'; break;
-          case 'Congregacion': nombreCat = 'Discursos para Necesidades de la Congregación'; break;
-          default: nombreCat = cat;
-        }
 
-        catTitulo.textContent = nombreCat;
-        catDiv.appendChild(catTitulo);
+<h2>Nuevo discurso</h2>
 
-        categorias[cat].slice().reverse().forEach(d => {
-          const div = document.createElement('div');
-          div.className = 'discurso';
-          div.innerHTML = `
-            <h3>${d.titulo}</h3>
-            <p>${d.contenido.replace(/\\n/g, '<br>')}</p>
-            <small>${new Date(d.fecha).toLocaleString()}</small><br>
-            <button class="delete-btn" onclick="eliminarDiscursoPorTitulo('${d.titulo}', '${d.categoria}', '${d.fecha}')">Eliminar</button>
-            <button onclick="editarDiscursoPorTitulo('${d.titulo}', '${d.categoria}', '${d.fecha}')">Editar</button>
-            <button onclick="exportarDiscursoPorTitulo('${d.titulo}', '${d.categoria}', '${d.fecha}')">Exportar (.txt)</button>
-            <button onclick="verSoloLecturaPorTitulo('${d.titulo}', '${d.categoria}', '${d.fecha}')">Ver</button>
-          `;
-          catDiv.appendChild(div);
-          });
+<input id="titulo" type="text" placeholder="Título del discurso" />
 
-        lista.appendChild(catDiv);
-      }
-    }
+<select id="categoria">
 
+<option value="Publico">Público</option>
+
+<option value="Asamblea">Asamblea</option>
+
+<option value="FuneralMatrimonio">Funeral / Matrimonio</option>
+
+<option value="Congregacion">Congregación</option>
+
+</select>
+
+<textarea id="contenido" placeholder="Contenido del discurso..."></textarea>
+
+<button onclick="guardarDiscurso()">Guardar discurso</button>
+
+<h2>Discursos guardados</h2>
+
+<div id="lista"></div>
+
+<script>
+  function uuidv4() {
+    return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
+      (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+    );
+  }
+function guardarDiscurso() {
+    const titulo = document.getElementById('titulo').value.trim();
+    const categoria = document.getElementById('categoria').value;
+    const contenido = document.getElementById('contenido').value.trim();
+    if (!titulo || !contenido) return alert('Completa título y contenido');
+    const discursos = JSON.parse(localStorage.getItem('discursos') || '[]');
+    discursos.push({ id: uuidv4(), titulo, categoria, contenido });
+    localStorage.setItem('discursos', JSON.stringify(discursos));
+    document.getElementById('titulo').value = '';
+    document.getElementById('contenido').value = '';
     mostrarDiscursos();
-  </script>
+  }
+
+  function eliminarDiscurso(id) {
+    const discursos = JSON.parse(localStorage.getItem('discursos') || '[]');
+    const nuevos = discursos.filter(d => d.id !== id);
+    localStorage.setItem('discursos', JSON.stringify(nuevos));
+    mostrarDiscursos();
+  }
+
+  function mostrarDiscursos() {
+    const lista = document.getElementById('lista');
+    const filtro = document.getElementById('search').value.toLowerCase();
+    const discursos = JSON.parse(localStorage.getItem('discursos') || '[]');
+    lista.innerHTML = '';
+    discursos.filter(d =>
+      d.titulo.toLowerCase().includes(filtro) ||
+      d.contenido.toLowerCase().includes(filtro)
+    ).forEach(d => {
+      const div = document.createElement('div');
+      div.className = 'discurso';
+      div.innerHTML = `
+        <strong>${d.titulo}</strong><br>
+        <em>${d.categoria}</em><br>
+        <p>${d.contenido}</p>
+        <button class="delete-btn" onclick="eliminarDiscurso('${d.id}')">Eliminar</button>
+      `;
+      lista.appendChild(div);
+    });
+  }
+
+  mostrarDiscursos();
+</script>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+      
+
+        
