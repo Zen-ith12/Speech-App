@@ -22,3 +22,14 @@
   <h1>JW Speech</h1>
 </body>
 </html>
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./service-worker.js')
+      .then(function(reg) {
+        console.log('✅ Service Worker registrado:', reg.scope);
+      })
+      .catch(function(error) {
+        console.error('❌ Error al registrar el Service Worker:', error);
+      });
+  }
+</script>
