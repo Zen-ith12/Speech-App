@@ -61,6 +61,8 @@
 
 <textarea id="contenido" placeholder="Contenido del discurso..."></textarea>
 
+<input type="hidden" id="discurso-id" />
+
 <button onclick="guardarDiscurso()">Guardar discurso</button>
 <button onclick="arreglarDiscursos()">Arreglar discursos antiguos</button>
 <button onclick="exportarDiscursos()">Exportar discursos</button>
@@ -76,20 +78,46 @@
     );
   } 
 
-  function guardarDiscurso() {
+    const id = document.getElementById('discurso-id').value;
     const titulo = document.getElementById('titulo').value.trim();
     const categoria = document.getElementById('categoria').value;
     const contenido = document.getElementById('contenido').value.trim();
     if (!titulo || !contenido) return alert('Completa título y contenido');
-    const discursos = JSON.parse(localStorage.getItem('discursos') || '[]');
-    discursos.push({ id: uuidv4(), titulo, categoria, contenido });
+    let discursos = JSON.parse(localStorage.getItem('discursos') || '[]');
+
+    if (id) {
+      discursos = discursos.map(d => d.id === id ? { id, titulo, categoria, contenido } : d);
+    } else {
+      discursos.push({ id: uuidv4(), titulo, categoria, contenido });
+    }
+
     localStorage.setItem('discursos', JSON.stringify(discursos));
+    document.getElementById('discurso-id').value = '';
     document.getElementById('titulo').value = '';
     document.getElementById('contenido').value = '';
+    document.getElementById('form-title').innerText = 'Nuevo discurso';
     mostrarDiscursos();
   }
 
-function mostrarDiscursos() {
+    let discursos = JSON.parse(localStorage.getItem('discursos') || '[]');
+    discursos = discursos.filter(d => d.id && d.id !== id);
+    localStorage.setItem('discursos', JSON.stringify(discursos));
+    mostrarDiscursos();
+  }
+
+  function editarDiscurso(id) {
+    const discursos = JSON.parse(localStorage.getItem('discursos') || '[]');
+    const discurso = discursos.find(d => d.id === id);
+    if (discurso) {
+      document.getElementById('discurso-id').value = discurso.id;
+      document.getElementById('titulo').value = discurso.titulo;
+      document.getElementById('categoria').value = discurso.categoria;
+      document.getElementById('contenido').value = discurso.contenido;
+      document.getElementById('form-title').innerText = 'Editar discurso';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }
+
     const lista = document.getElementById('lista');
     const filtro = document.getElementById('search').value.toLowerCase();
     const discursos = JSON.parse(localStorage.getItem('discursos') || '[]');
@@ -104,13 +132,13 @@ function mostrarDiscursos() {
         <strong>${d.titulo || 'Sin título'}</strong><br>
         <em>${d.categoria || 'Sin categoría'}</em><br>
         <p>${d.contenido || ''}</p>
+        <button class="edit-btn" onclick="editarDiscurso('${d.id}')">Editar</button>
         <button class="delete-btn" onclick="eliminarDiscurso('${d.id}')">Eliminar</button>
       `;
       lista.appendChild(div);
     });
-  } 
+  }
   
-function arreglarDiscursos() {
     let discursos = JSON.parse(localStorage.getItem('discursos') || '[]');
     let actualizados = discursos.map(d => {
       return {
@@ -123,9 +151,9 @@ function arreglarDiscursos() {
     localStorage.setItem('discursos', JSON.stringify(actualizados));
     alert('Discursos antiguos actualizados correctamente.');
     mostrarDiscursos();
-   }
-  
-function exportarDiscursos() {
+  }
+
+  function exportarDiscursos() {
     const discursos = localStorage.getItem('discursos');
     const blob = new Blob([discursos], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
@@ -136,7 +164,6 @@ function exportarDiscursos() {
     URL.revokeObjectURL(url);
    }
 
-function importarDiscursos(event) {
     const file = event.target.files[0];
     if (!file) return;
     const reader = new FileReader();
@@ -151,11 +178,10 @@ function importarDiscursos(event) {
         alert('Error al importar el archivo. Asegúrate de que sea un .json válido.');
       }
     };
-
-reader.readAsText(file);
+    reader.readAsText(file);
   }
 
   mostrarDiscursos();
 </script>
 </body>
-</html>  
+</html>
