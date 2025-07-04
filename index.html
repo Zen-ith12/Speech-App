@@ -3,110 +3,60 @@
 <html lang="es">
 
 <head>
-
 <meta charset="UTF-8" />
-
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
 <title>JW Speech</title>
-
 <style>
-
-body {
-
-background-color: #121212;
-
-color: #f0f0f0;
-
-font-family: 'Segoe UI', sans-serif;
-
-padding: 1rem;
-
-max-width: 800px;
-
-margin: auto;
-
-}
-
-input, textarea, select, button {
-
-width: 100%;
-
-margin: 0.5rem 0;
-
-padding: 0.5rem;
-
-font-size: 1rem;
-
-border: none;
-
-border-radius: 4px;
-
-}
-
-textarea {
-
-height: 250px;
-
-}
-
-button {
-
-background-color: #1e88e5;
-
-color: white;
-
-cursor: pointer;
-
-}
-
-.discurso {
-
-background-color: #1e1e1e;
-
-padding: 1rem;
-
-margin: 1rem 0;
-
-border-radius: 8px;
-
-}
-
-.delete-btn {
-
-background-color: crimson;
-
-}
-
+  body {
+    background-color: #121212;
+    color: #f0f0f0;
+    font-family: 'Segoe UI', sans-serif;
+    padding: 1rem;
+    max-width: 800px;
+    margin: auto;
+  }
+  input, textarea, select, button {
+    width: 100%;
+    margin: 0.5rem 0;
+    padding: 0.5rem;
+    font-size: 1rem;
+    border: none;
+    border-radius: 4px;
+  }
+  textarea {
+    height: 250px;
+  }
+  button {
+    background-color: #1e88e5;
+    color: white;
+    cursor: pointer;
+  }
+  .discurso {
+    background-color: #1e1e1e;
+    padding: 1rem;
+    margin: 1rem 0;
+    border-radius: 8px;
+  }
+  .delete-btn {
+    background-color: crimson;
+  }
 </style>
 
-</head>
 
 <body>
-
 <h1>JW Speech</h1>
-
 
 <input id="search" type="text" placeholder="Buscar discursos..." oninput="mostrarDiscursos()" />
 
-
 <h2>Nuevo discurso</h2>
-
 <input id="titulo" type="text" placeholder="Título del discurso" />
 
 <select id="categoria">
-
-<option value="Publico">Discursos Público</option>
-  
-<option value="Tesoros">Tesoros de la Biblia</option>
-
-<option value="Congregacion">Necesidades de la Congregación</option>
-  
-<option value="Asamblea">Asamblea</option>
-
-<option value="FuneralMatrimonio">Funeral / Matrimonio</option>
-  
-
+  <option value="Publico">Discursos Público</option>
+  <option value="Tesoros">Tesoros de la Biblia</option>
+  <option value="Congregacion">Necesidades de la Congregación</option>
+  <option value="Asamblea">Asamblea</option>
+  <option value="FuneralMatrimonio">Funeral / Matrimonio</option>
 </select>
 
 <textarea id="contenido" placeholder="Contenido del discurso..."></textarea>
@@ -114,16 +64,16 @@ background-color: crimson;
 <button onclick="guardarDiscurso()">Guardar discurso</button>
 
 <h2>Discursos guardados</h2>
-
 <div id="lista"></div>
 
-<script>
+  <script>
   function uuidv4() {
     return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
       (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
     );
   }
-function guardarDiscurso() {
+
+  function guardarDiscurso() {
     const titulo = document.getElementById('titulo').value.trim();
     const categoria = document.getElementById('categoria').value;
     const contenido = document.getElementById('contenido').value.trim();
@@ -134,9 +84,9 @@ function guardarDiscurso() {
     document.getElementById('titulo').value = '';
     document.getElementById('contenido').value = '';
     mostrarDiscursos();
-  }
+  } 
+    
 
-  function eliminarDiscurso(id) {
     const discursos = JSON.parse(localStorage.getItem('discursos') || '[]');
     const nuevos = discursos.filter(d => d.id !== id);
     localStorage.setItem('discursos', JSON.stringify(nuevos));
