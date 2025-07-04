@@ -74,7 +74,7 @@
     );
   } 
 
-  function guardarDiscurso() {
+
     const titulo = document.getElementById('titulo').value.trim();
     const categoria = document.getElementById('categoria').value;
     const contenido = document.getElementById('contenido').value.trim();
@@ -85,15 +85,15 @@
     document.getElementById('titulo').value = '';
     document.getElementById('contenido').value = '';
     mostrarDiscursos();
-  } 
-    
+  }
 
+  function eliminarDiscurso(id) {
     const discursos = JSON.parse(localStorage.getItem('discursos') || '[]');
     const nuevos = discursos.filter(d => d.id !== id);
     localStorage.setItem('discursos', JSON.stringify(nuevos));
     mostrarDiscursos();
-  }
-
+  } 
+  
   function mostrarDiscursos() {
     const lista = document.getElementById('lista');
     const filtro = document.getElementById('search').value.toLowerCase();
@@ -113,6 +113,14 @@
       `;
       lista.appendChild(div);
     });
+  }
+  
+function arreglarDiscursos() {
+    const discursos = JSON.parse(localStorage.getItem('discursos') || '[]');
+    const actualizados = discursos.map(d => d.id ? d : { id: uuidv4(), ...d });
+    localStorage.setItem('discursos', JSON.stringify(actualizados));
+    alert('Discursos antiguos actualizados correctamente.');
+    mostrarDiscursos();
   }
 
   mostrarDiscursos();
