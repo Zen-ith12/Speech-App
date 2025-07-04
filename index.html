@@ -59,7 +59,7 @@
   <option value="FuneralMatrimonio">Funeral / Matrimonio</option>
 </select>
 
-der="Contenido del discurso..."></textarea>
+<textarea id="contenido" placeholder="Contenido del discurso..."></textarea>
 
 <button onclick="guardarDiscurso()">Guardar discurso</button>
 <button onclick="arreglarDiscursos()">Arreglar discursos antiguos</button>
@@ -74,7 +74,7 @@ der="Contenido del discurso..."></textarea>
     return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
       (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
     );
-  }
+  } 
 
   function guardarDiscurso() {
     const titulo = document.getElementById('titulo').value.trim();
@@ -89,12 +89,6 @@ der="Contenido del discurso..."></textarea>
     mostrarDiscursos();
   }
 
-  function eliminarDiscurso(id) {
-    const discursos = JSON.parse(localStorage.getItem('discursos') || '[]');
-    const nuevos = discursos.filter(d => d.id !== id);
-    localStorage.setItem('discursos', JSON.stringify(nuevos));
-    mostrarDiscursos();
-  } 
 function mostrarDiscursos() {
     const lista = document.getElementById('lista');
     const filtro = document.getElementById('search').value.toLowerCase();
@@ -114,8 +108,9 @@ function mostrarDiscursos() {
       `;
       lista.appendChild(div);
     });
-  }
-
+  } 
+  
+function arreglarDiscursos() {
     let discursos = JSON.parse(localStorage.getItem('discursos') || '[]');
     let actualizados = discursos.map(d => {
       return {
@@ -128,9 +123,9 @@ function mostrarDiscursos() {
     localStorage.setItem('discursos', JSON.stringify(actualizados));
     alert('Discursos antiguos actualizados correctamente.');
     mostrarDiscursos();
-  }
-
-  function exportarDiscursos() {
+   }
+  
+function exportarDiscursos() {
     const discursos = localStorage.getItem('discursos');
     const blob = new Blob([discursos], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
@@ -139,9 +134,9 @@ function mostrarDiscursos() {
     a.download = 'discursos_backup.json';
     a.click();
     URL.revokeObjectURL(url);
-  }
+   }
 
-  function importarDiscursos(event) {
+function importarDiscursos(event) {
     const file = event.target.files[0];
     if (!file) return;
     const reader = new FileReader();
@@ -155,12 +150,12 @@ function mostrarDiscursos() {
       } catch (error) {
         alert('Error al importar el archivo. Asegúrate de que sea un .json válido.');
       }
-  
     };
-    reader.readAsText(file);
+
+reader.readAsText(file);
   }
 
   mostrarDiscursos();
 </script>
 </body>
-</html>
+</html>  
