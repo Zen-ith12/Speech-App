@@ -63,6 +63,8 @@ der="Contenido del discurso..."></textarea>
 
 <button onclick="guardarDiscurso()">Guardar discurso</button>
 <button onclick="arreglarDiscursos()">Arreglar discursos antiguos</button>
+<button onclick="exportarDiscursos()">Exportar discursos</button>
+<input type="file" accept="application/json" onchange="importarDiscursos(event)" />
 
 <h2>Discursos guardados</h2>
 <div id="lista"></div>
@@ -85,19 +87,6 @@ der="Contenido del discurso..."></textarea>
     document.getElementById('titulo').value = '';
     document.getElementById('contenido').value = '';
     mostrarDiscursos();
-  } 
-
-function guardarDiscurso() {
-    const titulo = document.getElementById('titulo').value.trim();
-    const categoria = document.getElementById('categoria').value;
-    const contenido = document.getElementById('contenido').value.trim();
-    if (!titulo || !contenido) return alert('Completa título y contenido');
-    const discursos = JSON.parse(localStorage.getItem('discursos') || '[]');
-    discursos.push({ id: uuidv4(), titulo, categoria, contenido });
-    localStorage.setItem('discursos', JSON.stringify(discursos));
-    document.getElementById('titulo').value = '';
-    document.getElementById('contenido').value = '';
-    mostrarDiscursos();
   }
 
   function eliminarDiscurso(id) {
@@ -105,9 +94,8 @@ function guardarDiscurso() {
     const nuevos = discursos.filter(d => d.id !== id);
     localStorage.setItem('discursos', JSON.stringify(nuevos));
     mostrarDiscursos();
-  }
-
-
+  } 
+function mostrarDiscursos() {
     const lista = document.getElementById('lista');
     const filtro = document.getElementById('search').value.toLowerCase();
     const discursos = JSON.parse(localStorage.getItem('discursos') || '[]');
@@ -128,7 +116,6 @@ function guardarDiscurso() {
     });
   }
 
-  function arreglarDiscursos() {
     let discursos = JSON.parse(localStorage.getItem('discursos') || '[]');
     let actualizados = discursos.map(d => {
       return {
@@ -142,8 +129,38 @@ function guardarDiscurso() {
     alert('Discursos antiguos actualizados correctamente.');
     mostrarDiscursos();
   }
+
+  function exportarDiscursos() {
+    const discursos = localStorage.getItem('discursos');
+    const blob = new Blob([discursos], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'discursos_backup.json';
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  function importarDiscursos(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      try {
+        const nuevos = JSON.parse(e.target.result);
+        if (!Array.isArray(nuevos)) throw new Error('Formato incorrecto');
+        localStorage.setItem('discursos', JSON.stringify(nuevos));
+        alert('Discursos importados correctamente.');
+        mostrarDiscursos();
+      } catch (error) {
+        alert('Error al importar el archivo. Asegúrate de que sea un .json válido.');
+      }
   
+    };
+    reader.readAsText(file);
+  }
+
   mostrarDiscursos();
 </script>
 </body>
-</html> 
+</html>
