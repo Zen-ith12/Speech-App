@@ -158,8 +158,13 @@
       item.style.textDecoration = "underline";
       item.style.color = "#90caf9";
       item.onclick = () => {
+        console.log("Click en categoría:", categoria);
         const seccion = document.getElementById("cat-" + categoria);
-        if (seccion) seccion.scrollIntoView({ behavior: "smooth" });
+        if (seccion) {
+          seccion.scrollIntoView({ behavior: "smooth" });
+        } else {
+          alert("No se encontró la sección para la categoría: " + categoria);
+        }
       };
       indiceCategorias.appendChild(item);
     }
@@ -167,8 +172,8 @@
     for (const categoria in agrupados) {
       const div = document.createElement("div");
       div.className = "categoria";
-      const h3 = document.createElement("h3");
       div.id = "cat-" + categoria;
+      const h3 = document.createElement("h3");
       h3.textContent = categoria;
       div.appendChild(h3);
       agrupados[categoria].forEach(d => {
