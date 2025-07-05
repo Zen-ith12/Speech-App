@@ -45,61 +45,18 @@
   button:hover {
     background-color: #1565c0;
   }
-  .discurso {
-    background-color: #1e1e1e;
-    padding: 1rem;
-    margin: 1rem 0;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+  .discurso-titulo {
+    cursor: pointer;
+    text-decoration: underline;
+    color: #90caf9;
+    margin-bottom: 0.5rem;
+    display: block;
   }
-  .discurso strong {
-    font-size: 1.2rem;
-    color: #bbdefb;
-  }
-  .discurso em {
-    color: #b0bec5;
-  }
-  .discurso-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 1rem;
-  }
-  .delete-btn {
-    background-color: crimson;
-  }
-  .delete-btn:hover {
-    background-color: #b71c1c;
-  }
-  .edit-btn {
-    background-color: #ff9800;
-    margin-top: 0.5rem;
-  }
-  .edit-btn:hover {
-    background-color: #ef6c00;
-  }
-  .read-btn {
-    background-color: #4caf50;
-    margin-top: 0.5rem;
-  }
-  .read-btn:hover {
-    background-color: #2e7d32;
+  .categoria {
+    margin-top: 1.5rem;
   }
   .indice {
     margin-top: 2rem;
-  }
-  .indice h3 {
-    margin-bottom: 0.5rem;
-    color: #90caf9;
-  }
-  .indice ul {
-    list-style: none;
-    padding-left: 1rem;
-  }
-  .indice li {
-    margin-bottom: 0.3rem;
-    color: #f0f0f0;
-    cursor: pointer;
-    text-decoration: underline;
   }
 </style>
 </head>
@@ -114,8 +71,15 @@
 </select>
 
 <textarea id="contenido" placeholder="Contenido del discurso..."></textarea>
-<button onclick="insertarNegrita()">Añadir negrita a palabra seleccionada</button>
 <input type="hidden" id="discurso-id" />
+<input id="titulo" type="text" placeholder="Título del discurso" />
+<select id="categoria">
+  <option value="Publicos">Discursos Públicos</option>
+  <option value="Tesoros">Tesoros de la Biblia</option>
+  <option value="Congregacion">Necesidades de la Congregación</option>
+  <option value="Asamblea">Asamblea</option>
+  <option value="FuneralMatrimonio">Funeral / Matrimonio</option>
+</select>
 
 <button onclick="guardarDiscurso()">Guardar discurso</button>
 <button onclick="arreglarDiscursos()">Arreglar discursos antiguos</button>
@@ -124,7 +88,7 @@
 <input type="file" id="importFile" accept="application/json" onchange="importarDiscursos(event)" style="display:none;" />
 
 <h2>Discursos guardados</h2>
-<div id="lista" class="discurso-grid"></div>
+<div id="lista"></div>
 
 <div class="indice">
   <h3>Índice por categoría</h3>
@@ -144,7 +108,84 @@
       document.body.style.setProperty("--fuente-app", fuenteGuardada);
       document.getElementById("fuente").value = fuenteGuardada;
     }
+    mostrarDiscursos();
   });
+
+  function guardarDiscurso() {
+    const titulo = document.getElementById("titulo").value.trim();
+    const contenido = document.getElementById("contenido").value.trim();
+    const categoria = document.getElementById("categoria").value;
+    if (!titulo || !contenido) return alert("Título y contenido requeridos");
+
+    const discursos = JSON.parse(localStorage.getItem("discursos") || "[]");
+    discursos.push({ id: Date.now(), titulo, contenido, categoria });
+    localStorage.setItem("discursos", JSON.stringify(discursos));
+    document.getElementById("titulo").value = "";
+    document.getElementById("contenido").value = "";
+    mostrarDiscursos();
+  }
+
+  function mostrarDiscursos() {
+    const lista = document.getElementById("lista");
+    const indiceCategorias = document.getElementById("indice-categorias");
+    lista.innerHTML = "";
+    indiceCategorias.innerHTML = "";
+    const discursos = JSON.parse(localStorage.getItem("discursos") || "[]");
+    const agrupados = {};
+    discursos.forEach(d => {
+      if (!agrupados[d.categoria]) agrupados[d.categoria] = [];
+      agrupados[d.categoria].push(d);
+    });
+
+    // Crear índice clicable
+    for (const categoria in agrupados) {
+      const item = document.createElement("div");
+      item.textContent = categoria;
+      item.style.cursor = "pointer";
+      item.style.textDecoration = "underline";
+      item.style.color = "#90caf9";
+      item.onclick = () => {
+        const seccion = document.getElementById("cat-" + categoria);
+        if (seccion) seccion.scrollIntoView({ behavior: "smooth" });
+      };
+      indiceCategorias.appendChild(item);
+    }
+
+    // Mostrar discursos agrupados
+      const div = document.createElement("div");
+      div.className = "categoria";
+      const h3 = document.createElement("h3");
+      div.id = "cat-" + categoria;
+      h3.textContent = categoria;
+      div.appendChild(h3);
+      agrupados[categoria].forEach(d => {
+        const span = document.createElement("span");
+        span.textContent = d.titulo;
+        span.className = "discurso-titulo";
+        span.onclick = () => abrirLectura(d);
+        div.appendChild(span);
+      });
+      lista.appendChild(div);
+    }
+  }
+
+  function abrirLectura(discurso) {
+    const nuevaVentana = window.open("", "_blank");
+    nuevaVentana.document.write(`
+      <html><head><title>${discurso.titulo}</title>
+      <style>
+        body { background-color: #121212; color: #f0f0f0; font-size: 18px; font-family: sans-serif; padding: 2rem; }
+        button { margin: 1rem 0.5rem; padding: 0.5rem 1rem; font-size: 1rem; }
+      </style>
+      </head><body>
+        <h1>${discurso.titulo}</h1>
+        <div id="contenido">${discurso.contenido.replace(/\n/g, '<br>')}</div>
+        <br>
+        <button onclick="document.body.style.fontSize = 'larger'">Aumentar letra</button>
+        <button onclick="document.body.style.fontSize = 'smaller'">Reducir letra</button>
+      </body></html>
+    `);
+  }
 </script>
 </body>
 </html>
