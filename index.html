@@ -14,7 +14,7 @@
       max-width: 900px;
       margin: auto;
     }
-h1 {
+    h1 {
       text-align: center;
       color: #90caf9;
     }
@@ -31,7 +31,7 @@ h1 {
       background-color: #1e1e1e;
       color: #f0f0f0;
     }
-textarea {
+    textarea {
       height: 250px;
       resize: vertical;
       font-weight: bold;
@@ -44,7 +44,7 @@ textarea {
     }
     button:hover {
       background-color: #1565c0;
-    } 
+    }
     .discurso-titulo {
       cursor: pointer;
       text-decoration: underline;
@@ -59,8 +59,8 @@ textarea {
     .discurso-titulo:hover {
       background-color: #2a2a2a;
     }
-    .categoria {
-      margin-top: 1.5rem;
+    .categoria { 
+    margin-top: 1.5rem;
       background-color: #1a1a1a;
       border-radius: 8px;
       padding: 1rem;
@@ -87,6 +87,7 @@ textarea {
   <option value="'Open Sans', sans-serif">Open Sans</option>
   <option value="'Roboto', sans-serif">Roboto</option>
 </select>
+
 <input type="hidden" id="discurso-id" />
 <input id="titulo" type="text" placeholder="Título del discurso" />
 <select id="categoria">
@@ -103,8 +104,9 @@ textarea {
 <div id="lista"></div>
 
 <div class="indice">
-    <h3>Índice por categoría</h3>
+  <h3>Índice por categoría</h3>
   <div id="indice-categorias"></div>
+                            </div>
 </div>
 
 <script>
@@ -114,7 +116,7 @@ function cambiarFuente() {
   localStorage.setItem("fuenteApp", fuente);
 }
 
-  window.addEventListener("DOMContentLoaded", () => {
+window.addEventListener("DOMContentLoaded", () => {
   const fuenteGuardada = localStorage.getItem("fuenteApp");
   if (fuenteGuardada) {
     document.body.style.setProperty("--fuente-app", fuenteGuardada);
@@ -122,8 +124,7 @@ function cambiarFuente() {
   }
   mostrarDiscursos();
 });
-
-function guardarDiscurso() {
+  function guardarDiscurso() {
   let id = document.getElementById("discurso-id").value;
   const titulo = document.getElementById("titulo").value.trim();
   const contenido = document.getElementById("contenido").value.trim();
@@ -137,8 +138,7 @@ function guardarDiscurso() {
   if (!id) {
     id = Date.now().toString(); // nuevo id si no hay uno
   }
-
-  let discursos = JSON.parse(localStorage.getItem("discursos") || "[]");
+    let discursos = JSON.parse(localStorage.getItem("discursos") || "[]");
   discursos = discursos.filter(d => d.id !== id);
   discursos.push({ id, titulo, contenido, categoria });
   localStorage.setItem("discursos", JSON.stringify(discursos));
@@ -175,8 +175,9 @@ function guardarDiscurso() {
       if (seccion) seccion.scrollIntoView({ behavior: "smooth" });
     };
     indiceCategorias.appendChild(item);
-}
-    for (const categoria in agrupados) {
+    }
+
+  for (const categoria in agrupados) {
     const safeId = categoria.replace(/\s+/g, '-').toLowerCase();
     const div = document.createElement("div");
     div.className = "categoria";
@@ -192,8 +193,8 @@ function guardarDiscurso() {
       div.appendChild(span);
     });
     lista.appendChild(div);
-    }
-    }
+  }
+}
 
 function abrirVistaPrevia(discurso) {
   const nuevaVentana = window.open("", "_blank");
@@ -220,7 +221,7 @@ function abrirVistaPrevia(discurso) {
         white-space: pre-wrap;
       }
       button {
-      margin: 1rem 0.5rem 0 0;
+    margin: 1rem 0.5rem 0 0;
         padding: 0.5rem 1rem;
         font-size: 1rem;
         border: none;
@@ -253,7 +254,7 @@ function abrirVistaPrevia(discurso) {
         fontSize += 2;
         contenido.style.fontSize = fontSize + 'px';
       };
-      document.getElementById('reducir').onclick = () => {
+    document.getElementById('reducir').onclick = () => {
         if(fontSize > 10) {
           fontSize -= 2;
           contenido.style.fontSize = fontSize + 'px';
