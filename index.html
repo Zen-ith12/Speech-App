@@ -92,7 +92,7 @@
 <input type="hidden" id="discurso-id" />
 <input id="titulo" type="text" placeholder="Título del discurso" />
 <select id="categoria">
-  <option value="Publicos">Discursos Públicos</option>
+  <option value="Publicos">Discursos Público</option>
   <option value="Tesoros">Tesoros de la Biblia</option>
   <option value="Congregacion">Necesidades de la Congregación</option>
   <option value="Asamblea">Asamblea</option>
@@ -109,9 +109,86 @@
   <div id="indice-categorias"></div>
 </div>
 
-<!-- El resto del script sigue funcionando igual -->
 <script>
-// ... Todo el script permanece sin cambios ...
+function cambiarFuente() {
+  const fuente = document.getElementById("fuente").value;
+  document.body.style.setProperty("--fuente-app", fuente);
+  localStorage.setItem("fuenteApp", fuente);
+}
+
+window.addEventListener("DOMContentLoaded", () => {
+  const fuenteGuardada = localStorage.getItem("fuenteApp");
+  if (fuenteGuardada) {
+    document.body.style.setProperty("--fuente-app", fuenteGuardada);
+    document.getElementById("fuente").value = fuenteGuardada;
+  }
+  mostrarDiscursos();
+});
+
+function guardarDiscurso() {
+  const id = document.getElementById("discurso-id").value || Date.now();
+  const titulo = document.getElementById("titulo").value.trim();
+  const contenido = document.getElementById("contenido").value.trim();
+  const categoria = document.getElementById("categoria").value;
+  if (!titulo || !contenido || !categoria) return alert("Debe completar todos los campos.");
+
+  let discursos = JSON.parse(localStorage.getItem("discursos") || "[]");
+  discursos = discursos.filter(d => d.id != id);
+  discursos.push({ id, titulo, contenido, categoria });
+  localStorage.setItem("discursos", JSON.stringify(discursos));
+
+  document.getElementById("titulo").value = "";
+  document.getElementById("contenido").value = "";
+  document.getElementById("discurso-id").value = "";
+  document.getElementById("categoria").value = "Publicos";
+  mostrarDiscursos();
+}
+
+function mostrarDiscursos() {
+  const lista = document.getElementById("lista");
+  const indiceCategorias = document.getElementById("indice-categorias");
+  lista.innerHTML = "";
+  indiceCategorias.innerHTML = "";
+
+  const discursos = JSON.parse(localStorage.getItem("discursos") || "[]");
+  const agrupados = {};
+  discursos.forEach(d => {
+    if (!agrupados[d.categoria]) agrupados[d.categoria] = [];
+    agrupados[d.categoria].push(d);
+  });
+
+  for (const categoria in agrupados) {
+    const safeId = categoria.replace(/\s+/g, '-').toLowerCase();
+    const item = document.createElement("div");
+    item.textContent = categoria;
+    item.style.cursor = "pointer";
+    item.style.textDecoration = "underline";
+    item.style.color = "#90caf9";
+    item.onclick = () => {
+      const seccion = document.getElementById("cat-" + safeId);
+      if (seccion) seccion.scrollIntoView({ behavior: "smooth" });
+    };
+    indiceCategorias.appendChild(item);
+  }
+
+  for (const categoria in agrupados) {
+    const safeId = categoria.replace(/\s+/g, '-').toLowerCase();
+    const div = document.createElement("div");
+    div.className = "categoria";
+    div.id = "cat-" + safeId;
+    const h3 = document.createElement("h3");
+    h3.textContent = categoria;
+    div.appendChild(h3);
+    agrupados[categoria].forEach(d => {
+      const span = document.createElement("span");
+      span.textContent = d.titulo;
+      span.className = "discurso-titulo";
+      span.onclick = () => alert(`Título: ${d.titulo}\nCategoría: ${d.categoria}\n\n${d.contenido}`);
+      div.appendChild(span);
+    });
+    lista.appendChild(div);
+  }
+}
 </script>
 </body>
 </html>
