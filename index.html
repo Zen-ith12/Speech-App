@@ -12,7 +12,7 @@
     color: #f0f0f0;
     font-family: var(--fuente-app, 'Noto Sans', 'Segoe UI', sans-serif);
     padding: 1rem;
-    max-width: 800px;
+    max-width: 900px;
     margin: auto;
   }
   h1 {
@@ -51,12 +51,30 @@
     color: #90caf9;
     margin-bottom: 0.5rem;
     display: block;
+    background-color: #1f1f1f;
+    padding: 0.5rem;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+  }
+  .discurso-titulo:hover {
+    background-color: #2a2a2a;
   }
   .categoria {
     margin-top: 1.5rem;
+    background-color: #1a1a1a;
+    border-radius: 8px;
+    padding: 1rem;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.4);
+  }
+  .categoria h3 {
+    margin-top: 0;
+    color: #81d4fa;
   }
   .indice {
     margin-top: 2rem;
+    background-color: #1e1e1e;
+    padding: 1rem;
+    border-radius: 8px;
   }
 </style>
 </head>
@@ -74,8 +92,7 @@
 <input type="hidden" id="discurso-id" />
 <input id="titulo" type="text" placeholder="Título del discurso" />
 <select id="categoria">
-  <option value="Publicos">Discursos Públicos</option>
-  <option value="Tesoros">Tesoros de la Biblia</option>
+  <option value="Publico">Discurso Público</option>
   <option value="Congregacion">Necesidades de la Congregación</option>
   <option value="Asamblea">Asamblea</option>
   <option value="FuneralMatrimonio">Funeral / Matrimonio</option>
@@ -83,9 +100,6 @@
 
 <button onclick="guardarDiscurso()">Guardar discurso</button>
 <button onclick="arreglarDiscursos()">Arreglar discursos antiguos</button>
-<button onclick="exportarDiscursos()">Guardar respaldo de discursos</button>
-<button onclick="document.getElementById('importFile').click()">Importar discursos guardados</button>
-<input type="file" id="importFile" accept="application/json" onchange="importarDiscursos(event)" style="display:none;" />
 
 <h2>Discursos guardados</h2>
 <div id="lista"></div>
@@ -137,7 +151,6 @@
       agrupados[d.categoria].push(d);
     });
 
-    // Crear índice clicable
     for (const categoria in agrupados) {
       const item = document.createElement("div");
       item.textContent = categoria;
@@ -151,7 +164,7 @@
       indiceCategorias.appendChild(item);
     }
 
-    // Mostrar discursos agrupados
+    for (const categoria in agrupados) {
       const div = document.createElement("div");
       div.className = "categoria";
       const h3 = document.createElement("h3");
