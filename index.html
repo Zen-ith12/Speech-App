@@ -18,10 +18,6 @@
   h1 {
     text-align: center;
     color: #90caf9;
-  } 
-  h1 {
-    text-align: center;
-    color: #90caf9;
   }
   input, textarea, select, button {
     width: 100%;
@@ -46,7 +42,7 @@
     cursor: pointer;
     transition: background-color 0.3s;
   }
-  button:hover {
+  
     background-color: #1565c0;
   }
   .discurso {
@@ -63,7 +59,7 @@
   .discurso em {
     color: #b0bec5;
   }
-.delete-btn {
+  .delete-btn {
     background-color: crimson;
   }
   .delete-btn:hover {
@@ -84,7 +80,9 @@
     background-color: #2e7d32;
   }
   .indice {
-     .indice h3 {
+    margin-top: 2rem;
+  }
+  .indice h3 {
     margin-bottom: 0.5rem;
     color: #90caf9;
   }
@@ -102,36 +100,36 @@
 </head>
 <body>
 <h1>JW Speech</h1>
-  <label for="fuente">Tipo de letra:</label>
+
+<label for="fuente">Tipo de letra:</label>
 <select id="fuente" onchange="cambiarFuente()">
   <option value="'Noto Sans', sans-serif">Noto Sans</option>
   <option value="'Open Sans', sans-serif">Open Sans</option>
   <option value="'Roboto', sans-serif">Roboto</option>
 </select>
 
-<input id="search" type="text" placeholder="Buscar discursos..." oninput="mostrarDiscursos()" />
+  list-style: none;
+    padding-left: 1rem;
+  }
+  .indice li {
+    margin-bottom: 0.3rem;
+    color: #f0f0f0;
+    cursor: pointer;
+    text-decoration: underline;
+  }
+</style>
+</head>
+<body>
+<h1>JW Speech</h1>
 
-<select id="filterCategoria" onchange="mostrarDiscursos()">
-  <option value="">Todas las categorías</option>
-  <option value="Publicos">Discursos Público</option>
-  <option value="Tesoros">Tesoros de la Biblia</option>
-  <option value="Congregacion">Necesidades de la Congregación</option>
-  <option value="Asamblea">Asamblea</option>
-  <option value="FuneralMatrimonio">Funeral / Matrimonio</option>
+<label for="fuente">Tipo de letra:</label>
+<select id="fuente" onchange="cambiarFuente()">
+  <option value="'Noto Sans', sans-serif">Noto Sans</option>
+  <option value="'Open Sans', sans-serif">Open Sans</option>
+  <option value="'Roboto', sans-serif">Roboto</option>
 </select>
 
-<h2 id="form-title">Nuevo discurso</h2>
-<input id="titulo" type="text" placeholder="Título del discurso" />
-
-<select id="categoria">
-  <option value="Publicos">Discursos Público</option>
-  <option value="Tesoros">Tesoros de la Biblia</option>
-  <option value="Congregacion">Necesidades de la Congregación</option>
-  <option value="Asamblea">Asamblea</option>
-  <option value="FuneralMatrimonio">Funeral / Matrimonio</option>
-</select>
-
-<textarea id="contenido" placeholder="Contenido del discurso..."></textarea>
+  <textarea id="contenido" placeholder="Contenido del discurso..."></textarea>
 <button onclick="insertarNegrita()">Añadir negrita a palabra seleccionada</button>
 <input type="hidden" id="discurso-id" />
 
@@ -144,9 +142,9 @@
 <div class="indice">
   <h3>Índice por categoría</h3>
   <div id="indice-categorias"></div>
-</div> 
+</div>
 
-  <script>
+<script>
   function cambiarFuente() {
     const fuente = document.getElementById("fuente").value;
     document.body.style.setProperty("--fuente-app", fuente);
