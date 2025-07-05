@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>JW Speech</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;700&family=Open+Sans:wght@400;700&family=Roboto:wght@400;700&display=swap');
@@ -35,6 +35,7 @@
   textarea {
     height: 250px;
     resize: vertical;
+    font-weight: bold;
   }
   button {
     background-color: #1e88e5;
@@ -88,7 +89,6 @@
   <option value="'Roboto', sans-serif">Roboto</option>
 </select>
 
-<textarea id="contenido" placeholder="Contenido del discurso..." style="font-weight: bold;"></textarea>
 <input type="hidden" id="discurso-id" />
 <input id="titulo" type="text" placeholder="Título del discurso" />
 <select id="categoria">
@@ -98,7 +98,7 @@
   <option value="Asamblea">Asamblea</option>
   <option value="FuneralMatrimonio">Funeral / Matrimonio</option>
 </select>
-
+<textarea id="contenido" placeholder="Contenido del discurso..."></textarea>
 <button onclick="guardarDiscurso()">Guardar discurso</button>
 
 <h2>Discursos guardados</h2>
@@ -126,22 +126,29 @@ window.addEventListener("DOMContentLoaded", () => {
 });
 
 function guardarDiscurso() {
-  const id = document.getElementById("discurso-id").value || Date.now();
+  const id = document.getElementById("discurso-id").value || Date.now().toString();
   const titulo = document.getElementById("titulo").value.trim();
   const contenido = document.getElementById("contenido").value.trim();
   const categoria = document.getElementById("categoria").value;
-  if (!titulo || !contenido || !categoria) return alert("Debe completar todos los campos.");
+  if (!titulo || !contenido || !categoria) {
+    alert("Debe completar todos los campos.");
+    return;
+  }
 
   let discursos = JSON.parse(localStorage.getItem("discursos") || "[]");
-  discursos = discursos.filter(d => d.id != id);
+  // Eliminar discurso con mismo id para actualizar
+  discursos = discursos.filter(d => d.id !== id);
   discursos.push({ id, titulo, contenido, categoria });
   localStorage.setItem("discursos", JSON.stringify(discursos));
 
+  // Limpiar inputs
   document.getElementById("titulo").value = "";
   document.getElementById("contenido").value = "";
   document.getElementById("discurso-id").value = "";
   document.getElementById("categoria").value = "Publicos";
+
   mostrarDiscursos();
+  alert("Discurso guardado.");
 }
 
 function mostrarDiscursos() {
@@ -151,12 +158,18 @@ function mostrarDiscursos() {
   indiceCategorias.innerHTML = "";
 
   const discursos = JSON.parse(localStorage.getItem("discursos") || "[]");
+  if (discursos.length === 0) {
+    lista.innerHTML = "<p>No hay discursos guardados.</p>";
+    return;
+  }
+  // Agrupar por categoría
   const agrupados = {};
   discursos.forEach(d => {
     if (!agrupados[d.categoria]) agrupados[d.categoria] = [];
     agrupados[d.categoria].push(d);
   });
 
+  // Mostrar índice categorías (clicable)
   for (const categoria in agrupados) {
     const safeId = categoria.replace(/\s+/g, '-').toLowerCase();
     const item = document.createElement("div");
@@ -171,14 +184,17 @@ function mostrarDiscursos() {
     indiceCategorias.appendChild(item);
   }
 
+  // Mostrar discursos agrupados
   for (const categoria in agrupados) {
     const safeId = categoria.replace(/\s+/g, '-').toLowerCase();
     const div = document.createElement("div");
     div.className = "categoria";
     div.id = "cat-" + safeId;
+
     const h3 = document.createElement("h3");
     h3.textContent = categoria;
     div.appendChild(h3);
+
     agrupados[categoria].forEach(d => {
       const span = document.createElement("span");
       span.textContent = d.titulo;
@@ -186,59 +202,110 @@ function mostrarDiscursos() {
       span.onclick = () => abrirVistaPrevia(d);
       div.appendChild(span);
     });
+
     lista.appendChild(div);
   }
 }
 
 function abrirVistaPrevia(discurso) {
   const nuevaVentana = window.open("", "_blank");
-  const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${discurso.titulo}</title>
+  const html = `
+  <html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>${discurso.titulo}</title>
     <style>
-      body { background-color: #121212; color: #f0f0f0; font-family: 'Noto Sans', sans-serif; padding: 2rem; font-size: 18px; }
-      #contenido { margin-top: 1rem; }
-      button { margin: 1rem 0.5rem 0 0; padding: 0.5rem 1rem; font-size: 1rem; border: none; border-radius: 5px; cursor: pointer; }
-      .btn-azul { background-color: #1e88e5; color: white; }
-      .btn-rojo { background-color: #e53935; color: white; }
-    </style></head><body>
+      body {
+        background-color: #121212;
+        color: #f0f0f0;
+        font-family: 'Noto Sans', sans-serif;
+        padding: 2rem;
+        font-size: 18px;
+      }
+      #contenido {
+        margin-top: 1rem;
+        white-space: pre-wrap;
+      }
+      button {
+        margin: 1rem 0.5rem 0 0;
+        padding: 0.5rem 1rem;
+        font-size: 1rem;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      .btn-azul {
+        background-color: #1e88e5;
+        color: white;
+      }
+      .btn-rojo {
+        background-color: #e53935;
+        color: white;
+      }
+    </style>
+  </head>
+  <body>
     <h1>${discurso.titulo}</h1>
     <div id="contenido">${discurso.contenido.replace(/\n/g, "<br>")}</div>
-    <br/>
     <button class="btn-azul" id="aumentar">Aumentar letra</button>
     <button class="btn-azul" id="reducir">Reducir letra</button>
     <button class="btn-azul" id="editar">Editar</button>
     <button class="btn-rojo" id="eliminar">Eliminar</button>
-    <button class="btn-azul" onclick="window.close()">Volver</button>
+    <button class="btn-azul" onclick="window.close()">Cerrar</button>
+
     <script>
       let fontSize = 18;
-      document.getElementById("aumentar").onclick = () => {
+      const contenido = document.getElementById('contenido');
+      document.getElementById('aumentar').onclick = () => {
         fontSize += 2;
-        document.getElementById("contenido").style.fontSize = fontSize + "px";
+        contenido.style.fontSize = fontSize + 'px';
       };
-      document.getElementById("reducir").onclick = () => {
-        fontSize -= 2;
-        document.getElementById("contenido").style.fontSize = fontSize + "px";
+      document.getElementById('reducir').onclick = () => {
+        if(fontSize > 10) {
+          fontSize -= 2;
+          contenido.style.fontSize = fontSize + 'px';
+        }
       };
-      document.getElementById("editar").onclick = () => {
-        window.opener.document.getElementById("discurso-id").value = ${discurso.id};
-        window.opener.document.getElementById("titulo").value = `${discurso.titulo}`;
-        window.opener.document.getElementById("contenido").value = `${discurso.contenido}`;
-        window.opener.document.getElementById("categoria").value = `${discurso.categoria}`;
-        window.close();
+      document.getElementById('editar').onclick = () => {
+        if(confirm('¿Deseas editar este discurso?')) {
+          window.opener.editarDiscursoDesdeLectura('${discurso.id}');
+          window.close();
+        }
       };
-      document.getElementById("eliminar").onclick = () => {
-        if (confirm("¿Estás seguro de eliminar este discurso?")) {
-          const discursos = JSON.parse(window.opener.localStorage.getItem("discursos") || "[]").filter(d => d.id !== ${discurso.id});
-          window.opener.localStorage.setItem("discursos", JSON.stringify(discursos));
-          window.opener.mostrarDiscursos();
+      document.getElementById('eliminar').onclick = () => {
+        if(confirm('¿Seguro que quieres eliminar este discurso?')) {
+          window.opener.eliminarDiscursoDesdeLectura('${discurso.id}');
           window.close();
         }
       };
     </script>
-  </body></html>`;
+  </body>
+  </html>
+  `;
   nuevaVentana.document.open();
   nuevaVentana.document.write(html);
   nuevaVentana.document.close();
 }
+
+function editarDiscursoDesdeLectura(id) {
+  let discursos = JSON.parse(localStorage.getItem("discursos") || "[]");
+  const discurso = discursos.find(d => d.id === id);
+  if (discurso) {
+    document.getElementById("discurso-id").value = discurso.id;
+    document.getElementById("titulo").value = discurso.titulo;
+    document.getElementById("contenido").value = discurso.contenido;
+    document.getElementById("categoria").value = discurso.categoria;
+    window.scrollTo(0,0);
+  }
+}
+
+function eliminarDiscursoDesdeLectura(id) {
+  let discursos = JSON.parse(localStorage.getItem("discursos") || "[]");
+  discursos = discursos.filter(d => d.id !== id);
+  localStorage.setItem("discursos", JSON.stringify(discursos));
+  mostrarDiscursos();
+}
+
 </script>
 </body>
 </html>
