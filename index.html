@@ -209,6 +209,10 @@ function mostrarDiscursos() {
 
 function abrirVistaPrevia(discurso) {
   const nuevaVentana = window.open("", "_blank");
+  if (!nuevaVentana) {
+    alert("Por favor, permite ventanas emergentes para esta página.");
+    return;
+  }
   const html = `
   <html lang="es">
   <head>
@@ -246,7 +250,7 @@ function abrirVistaPrevia(discurso) {
   </head>
   <body>
     <h1>${discurso.titulo}</h1>
-    <div id="contenido">${discurso.contenido.replace(/\n/g, "<br>")}</div>
+    <div id="contenido">${discurso.contenido.replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\n/g, "<br>")}</div>
     <button class="btn-azul" id="aumentar">Aumentar letra</button>
     <button class="btn-azul" id="reducir">Reducir letra</button>
     <button class="btn-azul" id="editar">Editar</button>
@@ -255,57 +259,4 @@ function abrirVistaPrevia(discurso) {
 
     <script>
       let fontSize = 18;
-      const contenido = document.getElementById('contenido');
-      document.getElementById('aumentar').onclick = () => {
-        fontSize += 2;
-        contenido.style.fontSize = fontSize + 'px';
-      };
-      document.getElementById('reducir').onclick = () => {
-        if(fontSize > 10) {
-          fontSize -= 2;
-          contenido.style.fontSize = fontSize + 'px';
-        }
-      };
-      document.getElementById('editar').onclick = () => {
-        if(confirm('¿Deseas editar este discurso?')) {
-          window.opener.editarDiscursoDesdeLectura('${discurso.id}');
-          window.close();
-        }
-      };
-      document.getElementById('eliminar').onclick = () => {
-        if(confirm('¿Seguro que quieres eliminar este discurso?')) {
-          window.opener.eliminarDiscursoDesdeLectura('${discurso.id}');
-          window.close();
-        }
-      };
-    </script>
-  </body>
-  </html>
-  `;
-  nuevaVentana.document.open();
-  nuevaVentana.document.write(html);
-  nuevaVentana.document.close();
-}
-
-function editarDiscursoDesdeLectura(id) {
-  let discursos = JSON.parse(localStorage.getItem("discursos") || "[]");
-  const discurso = discursos.find(d => d.id === id);
-  if (discurso) {
-    document.getElementById("discurso-id").value = discurso.id;
-    document.getElementById("titulo").value = discurso.titulo;
-    document.getElementById("contenido").value = discurso.contenido;
-    document.getElementById("categoria").value = discurso.categoria;
-    window.scrollTo(0,0);
-  }
-}
-
-function eliminarDiscursoDesdeLectura(id) {
-  let discursos = JSON.parse(localStorage.getItem("discursos") || "[]");
-  discursos = discursos.filter(d => d.id !== id);
-  localStorage.setItem("discursos", JSON.stringify(discursos));
-  mostrarDiscursos();
-}
-
-</script>
-</body>
-</html>
+      const contenido = document.getElementById('c
