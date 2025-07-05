@@ -2,39 +2,37 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>JW Speech</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>JW Speech - App Completa</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;700&family=Open+Sans:wght@400;700&family=Roboto:wght@400;700&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans&family=Open+Sans&family=Roboto&display=swap');
 
   body {
     background-color: #121212;
     color: #f0f0f0;
-    font-family: var(--fuente-app, 'Noto Sans', 'Segoe UI', sans-serif);
+    font-family: var(--fuente-app, 'Noto Sans', sans-serif);
     padding: 1rem;
-    max-width: 800px;
+    max-width: 900px;
     margin: auto;
   }
-  h1 {
-    text-align: center;
+  h1, h2 {
     color: #90caf9;
   }
   input, textarea, select, button {
     width: 100%;
     margin: 0.5rem 0;
-    padding: 0.75rem;
+    padding: 0.6rem;
     font-size: 1rem;
     border: none;
     border-radius: 6px;
     box-sizing: border-box;
-  }
-  input, select, textarea {
     background-color: #1e1e1e;
     color: #f0f0f0;
   }
   textarea {
-    height: 250px;
+    height: 180px;
     resize: vertical;
+    font-weight: normal;
   }
   button {
     background-color: #1e88e5;
@@ -42,7 +40,7 @@
     cursor: pointer;
     transition: background-color 0.3s;
   }
-  
+  button:hover:not(.delete-btn) {
     background-color: #1565c0;
   }
   .discurso {
@@ -50,55 +48,92 @@
     padding: 1rem;
     margin: 1rem 0;
     border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    position: relative;
   }
-  .discurso strong {
+  .discurso .fav-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.3rem;
+    color: #bbb;
+    transition: color 0.3s;
+  }
+  .discurso .fav-btn.favorito {
+    color: gold;
+  }
+  .discurso-titulo {
+    font-weight: 700;
     font-size: 1.2rem;
-    color: #bbdefb;
+    margin-bottom: 0.3rem;
   }
-  .discurso em {
-    color: #b0bec5;
+  .categoria-label {
+    font-weight: bold;
+    color: #90caf9;
+    margin-bottom: 0.5rem;
   }
   .delete-btn {
     background-color: crimson;
+    border: none;
+    padding: 0.3rem 0.6rem;
+    border-radius: 4px;
+    color: white;
+    cursor: pointer;
+    margin-right: 0.5rem;
   }
   .delete-btn:hover {
     background-color: #b71c1c;
   }
-  .edit-btn {
+  .edit-btn, .read-btn, .export-btn, .import-btn, .backup-btn, .restore-btn, .copy-btn, .reminder-btn {
     background-color: #ff9800;
-    margin-top: 0.5rem;
+    border: none;
+    padding: 0.3rem 0.8rem;
+    border-radius: 4px;
+    color: white;
+    cursor: pointer;
+    margin-right: 0.3rem;
+    margin-top: 0.3rem;
+    font-size: 0.9rem;
   }
-  .edit-btn:hover {
+  .edit-btn:hover, .read-btn:hover, .export-btn:hover, .import-btn:hover, .backup-btn:hover, .restore-btn:hover, .copy-btn:hover, .reminder-btn:hover {
     background-color: #ef6c00;
   }
-  .read-btn {
-    background-color: #4caf50;
+  .btn-group {
     margin-top: 0.5rem;
   }
-  .read-btn:hover {
-    background-color: #2e7d32;
+  label {
+    font-weight: bold;
   }
-  .indice {
-    margin-top: 2rem;
+  #importFile {
+    display: none;
   }
-  .indice h3 {
-    margin-bottom: 0.5rem;
+  #readModal {
+    position: fixed;
+    top:0; left:0; right:0; bottom:0;
+    background: #000;
+    color: #eee;
+    padding: 1rem;
+    overflow-y: auto;
+    display: none;
+    z-index: 1000;
+  }
+  #readModal h2 {
+    margin-top: 0;
     color: #90caf9;
   }
-  .indice ul {
-    list-style: none;
-    padding-left: 1rem;
-  }
-  .indice li {
-    margin-bottom: 0.3rem;
-    color: #f0f0f0;
-    cursor: pointer;
-    text-decoration: underline;
+  #readModal button {
+    background: #444;
+    color: #eee;
+    font-size: 1.2rem;
+    padding: 0.4rem 1rem;
+    margin-bottom: 1rem;
   }
 </style>
 </head>
 <body>
+
 <h1>JW Speech</h1>
 
 <label for="fuente">Tipo de letra:</label>
@@ -108,57 +143,351 @@
   <option value="'Roboto', sans-serif">Roboto</option>
 </select>
 
-  list-style: none;
-    padding-left: 1rem;
-  }
-  .indice li {
-    margin-bottom: 0.3rem;
-    color: #f0f0f0;
-    cursor: pointer;
-    text-decoration: underline;
-  }
-</style>
-</head>
-<body>
-<h1>JW Speech</h1>
+<hr />
 
-<label for="fuente">Tipo de letra:</label>
-<select id="fuente" onchange="cambiarFuente()">
-  <option value="'Noto Sans', sans-serif">Noto Sans</option>
-  <option value="'Open Sans', sans-serif">Open Sans</option>
-  <option value="'Roboto', sans-serif">Roboto</option>
+<input id="search" type="text" placeholder="Buscar discursos..." oninput="mostrarDiscursos()" />
+<select id="filterCategoria" onchange="mostrarDiscursoIndice()">
+  <option value="">Todas las categorías</option>
+  <option value="Publico">Discursos Públicos</option>
+  <option value="Tesoros">Tesoros de la Biblia</option>
+  <option value="Congregacion">Necesidades de la Congregación</option>
+  <option value="Asamblea">Asamblea</option>
+  <option value="FuneralMatrimonio">Funeral / Matrimonio</option>
 </select>
 
-  <textarea id="contenido" placeholder="Contenido del discurso..."></textarea>
-<button onclick="insertarNegrita()">Añadir negrita a palabra seleccionada</button>
-<input type="hidden" id="discurso-id" />
+<hr />
 
-<button onclick="guardarDiscurso()">Guardar discurso</button>
-<button onclick="arreglarDiscursos()">Arreglar discursos antiguos</button>
+<h2>Nuevo Discurso / Editar</h2>
+<input id="titulo" type="text" placeholder="Título del discurso" />
+<select id="categoria">
+  <option value="Publico">Discursos Públicos</option>
+  <option value="Tesoros">Tesoros de la Biblia</option>
+  <option value="Congregacion">Necesidades de la Congregación</option>
+  <option value="Asamblea">Asamblea</option>
+  <option value="FuneralMatrimonio">Funeral / Matrimonio</option>
+</select>
+<textarea id="contenido" placeholder="Contenido del discurso..."></textarea>
+
+<div class="btn-group">
+  <button onclick="insertarNegrita()">Añadir negrita a texto seleccionado</button>
+  <button onclick="guardarDiscurso()">Guardar Discurso</button>
+  <button onclick="limpiarFormulario()">Limpiar Formulario</button>
+</div>
+
+<hr />
 
 <h2>Discursos guardados</h2>
 <div id="lista"></div>
 
-<div class="indice">
-  <h3>Índice por categoría</h3>
-  <div id="indice-categorias"></div>
+<hr />
+
+<h2>Índice de Discursos</h2>
+<div id="indice-categorias"></div>
+
+<hr />
+
+<div class="btn-group">
+  <button class="export-btn" onclick="exportarDiscursos()">Exportar Discursos (JSON)</button>
+  <button class="import-btn" onclick="document.getElementById('importFile').click()">Importar Discursos (JSON)</button>
+  <button class="backup-btn" onclick="backupDiscursos()">Backup Automático</button>
+  <button class="restore-btn" onclick="restaurarBackup()">Restaurar Backup</button>
+</div>
+<input type="file" id="importFile" accept="application/json" onchange="importarDiscursos(event)" />
+
+<div id="readModal">
+  <button onclick="cerrarLectura()">Cerrar lectura ×</button>
+  <h2 id="readTitulo"></h2>
+  <p id="readContenido" style="font-size:1.4rem; font-weight:600; line-height:1.6;"></p>
 </div>
 
 <script>
+  // Fuente
   function cambiarFuente() {
     const fuente = document.getElementById("fuente").value;
     document.body.style.setProperty("--fuente-app", fuente);
     localStorage.setItem("fuenteApp", fuente);
   }
-
-  // Al cargar la página, aplicar la fuente guardada si existe
   window.addEventListener("DOMContentLoaded", () => {
     const fuenteGuardada = localStorage.getItem("fuenteApp");
     if (fuenteGuardada) {
       document.body.style.setProperty("--fuente-app", fuenteGuardada);
       document.getElementById("fuente").value = fuenteGuardada;
     }
+    mostrarDiscursos();
+    mostrarDiscursoIndice();
   });
-</script>
-</body>
-</html>
+
+  // Variables globales para edición
+  let editandoId = null;
+
+  // Guardar discurso (nuevo o editar)
+  function guardarDiscurso() {
+    const titulo = document.getElementById("titulo").value.trim();
+    const contenido = document.getElementById("contenido").value.trim();
+    const categoria = document.getElementById("categoria").value;
+    if (!titulo || !contenido) {
+      alert("Por favor, completa título y contenido.");
+      return;
+    }
+    let discursos = JSON.parse(localStorage.getItem("discursosJW") || "[]");
+
+    if (editandoId) {
+      // Editar existente
+      discursos = discursos.map(d => {
+        if (d.id === editandoId) {
+          return { ...d, titulo, contenido, categoria };
+        }
+        return d;
+      });
+      editandoId = null;
+    } else {
+      // Nuevo
+      discursos.push({ id: Date.now(), titulo, contenido, categoria, favorito:false, fecha: Date.now() });
+    }
+    localStorage.setItem("discursosJW", JSON.stringify(discursos));
+    limpiarFormulario();
+    mostrarDiscursos();
+    mostrarDiscursoIndice();
+  }
+
+  // Limpiar formulario
+  function limpiarFormulario() {
+    document.getElementById("titulo").value = "";
+    document.getElementById("contenido").value = "";
+    document.getElementById("categoria").value = "Publico";
+    editandoId = null;
+    document.getElementById("form-title")?.remove();
+  }
+
+  // Mostrar discursos (lista con botones)
+  function mostrarDiscursos() {
+    const lista = document.getElementById("lista");
+    lista.innerHTML = "";
+    const discursos = JSON.parse(localStorage.getItem("discursosJW") || "[]");
+    const filtroCategoria = document.getElementById("filterCategoria").value;
+    const textoBusqueda = document.getElementById("search").value.toLowerCase();
+
+    let filtrados = discursos;
+    if (filtroCategoria) filtrados = filtrados.filter(d => d.categoria === filtroCategoria);
+    if (textoBusqueda) {
+      filtrados = filtrados.filter(d =>
+        d.titulo.toLowerCase().includes(textoBusqueda) ||
+        d.contenido.toLowerCase().includes(textoBusqueda)
+      );
+    }
+
+    if (filtrados.length === 0) {
+      lista.innerHTML = "<p>No hay discursos que coincidan.</p>";
+      return;
+    }
+
+    filtrados.forEach(d => {
+      const div = document.createElement("div");
+      div.className = "discurso";
+
+      const favBtn = document.createElement("button");
+      favBtn.className = "fav-btn" + (d.favorito ? " favorito" : "");
+      favBtn.innerHTML = d.favorito ? "★" : "☆";
+      favBtn.title = d.favorito ? "Quitar favorito" : "Marcar favorito";
+      favBtn.onclick = () => toggleFavorito(d.id);
+
+      const titulo = document.createElement("div");
+      titulo.className = "discurso-titulo";
+      titulo.textContent = d.titulo;
+
+      const cat = document.createElement("div");
+      cat.className = "categoria-label";
+      cat.textContent = `Categoría: ${d.categoria}`;
+
+      const contenido = document.createElement("p");
+      contenido.textContent = d.contenido;
+
+      // Botones acciones
+      const btnGroup = document.createElement("div");
+      btnGroup.className = "btn-group";
+
+      const btnLeer = document.createElement("button");
+      btnLeer.className = "read-btn";
+      btnLeer.textContent = "Leer";
+      btnLeer.onclick = () => abrirLectura(d);
+
+      const btnEditar = document.createElement("button");
+      btnEditar.className = "edit-btn";
+      btnEditar.textContent = "Editar";
+      btnEditar.onclick = () => cargarParaEditar(d);
+
+      const btnEliminar = document.createElement("button");
+      btnEliminar.className = "delete-btn";
+      btnEliminar.textContent = "Eliminar";
+      btnEliminar.onclick = () => {
+        if(confirm("¿Eliminar este discurso?")) eliminarDiscurso(d.id);
+      };
+
+      const btnCopiar = document.createElement("button");
+      btnCopiar.className = "copy-btn";
+      btnCopiar.textContent = "Copiar";
+      btnCopiar.onclick = () => copiarAlPortapapeles(d);
+
+      const btnRecordar = document.createElement("button");
+      btnRecordar.className = "reminder-btn";
+      btnRecordar.textContent = "Recordar en 10s";
+      btnRecordar.onclick = () => crearRecordatorio(d);
+
+      btnGroup.appendChild(btnLeer);
+      btnGroup.appendChild(btnEditar);
+      btnGroup.appendChild(btnEliminar);
+      btnGroup.appendChild(btnCopiar);
+      btnGroup.appendChild(btnRecordar);
+
+      div.appendChild(favBtn);
+      div.appendChild(titulo);
+      div.appendChild(cat);
+      div.appendChild(contenido);
+      div.appendChild(btnGroup);
+
+      lista.appendChild(div);
+    });
+  }
+
+  // Toggle favorito
+  function toggleFavorito(id) {
+    let discursos = JSON.parse(localStorage.getItem("discursosJW") || "[]");
+    discursos = discursos.map(d => {
+      if(d.id === id) d.favorito = !d.favorito;
+      return d;
+    });
+    localStorage.setItem("discursosJW", JSON.stringify(discursos));
+    mostrarDiscursos();
+  }
+
+  // Eliminar discurso
+  function eliminarDiscurso(id) {
+    let discursos = JSON.parse(localStorage.getItem("discursosJW") || "[]");
+    discursos = discursos.filter(d => d.id !== id);
+    localStorage.setItem("discursosJW", JSON.stringify(discursos));
+    mostrarDiscursos();
+    mostrarDiscursoIndice();
+  }
+
+  // Cargar para editar
+  function cargarParaEditar(d) {
+    document.getElementById("titulo").value = d.titulo;
+    document.getElementById("contenido").value = d.contenido;
+    document.getElementById("categoria").value = d.categoria;
+    editandoId = d.id;
+    window.scrollTo(0, 0);
+  }
+
+  // Insertar negrita a texto seleccionado en textarea
+  function insertarNegrita() {
+    const textarea = document.getElementById("contenido");
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    if (start === end) {
+      alert("Selecciona una palabra o texto para poner en negrita.");
+      return;
+    }
+    const before = textarea.value.substring(0, start);
+    const selected = textarea.value.substring(start, end);
+    const after = textarea.value.substring(end);
+    textarea.value = before + "**" + selected + "**" + after;
+    textarea.focus();
+    textarea.selectionStart = start + 2;
+    textarea.selectionEnd = end + 2;
+  }
+
+  // Abrir discurso en modo lectura (ventana modal)
+  function abrirLectura(d) {
+    const modal = document.getElementById("readModal");
+    document.getElementById("readTitulo").textContent = d.titulo;
+    // Para mostrar negritas markdown básico, reemplazar **texto** por <strong>texto</strong>
+    const contenidoHTML = d.contenido.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>").replace(/\n/g, "<br>");
+    document.getElementById("readContenido").innerHTML = contenidoHTML;
+    modal.style.display = "block";
+  }
+
+  // Cerrar modal lectura
+  function cerrarLectura() {
+    document.getElementById("readModal").style.display = "none";
+  }
+
+  // Exportar discursos a JSON
+  function exportarDiscursos() {
+    const discursos = localStorage.getItem("discursosJW");
+    if (!discursos) {
+      alert("No hay discursos para exportar.");
+      return;
+    }
+    const blob = new Blob([discursos], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "discursosJW.json";
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  // Importar discursos desde archivo JSON
+  function importarDiscursos(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+      try {
+        const imported = JSON.parse(e.target.result);
+        if (!Array.isArray(imported)) throw "Formato incorrecto";
+        let discursos = JSON.parse(localStorage.getItem("discursosJW") || "[]");
+        // Evitar duplicados por id (puedes ajustar según prefieras)
+        const nuevos = imported.filter(i => !discursos.some(d => d.id === i.id));
+        discursos = discursos.concat(nuevos);
+        localStorage.setItem("discursosJW", JSON.stringify(discursos));
+        alert(`${nuevos.length} discursos importados.`);
+        mostrarDiscursos();
+        mostrarDiscursoIndice();
+      } catch {
+        alert("Archivo JSON inválido.");
+      }
+    };
+    reader.readAsText(file);
+    // Limpiar input para permitir importar mismo archivo otra vez
+    event.target.value = "";
+  }
+
+  // Backup automático a otra clave localStorage
+  function backupDiscursos() {
+    const discursos = localStorage.getItem("discursosJW");
+    if (!discursos) {
+      alert("No hay discursos para respaldar.");
+      return;
+    }
+    localStorage.setItem("discursosJW_backup", discursos);
+    alert("Backup guardado con éxito.");
+  }
+
+  // Restaurar backup
+  function restaurarBackup() {
+    const backup = localStorage.getItem("discursosJW_backup");
+    if (!backup) {
+      alert("No hay backup para restaurar.");
+      return;
+    }
+    if (confirm("¿Estás seguro de restaurar el backup? Se sobrescribirá tu lista actual.")) {
+      localStorage.setItem("discursosJW", backup);
+      mostrarDiscursos();
+      mostrarDiscursoIndice();
+      alert("Backup restaurado.");
+    }
+  }
+
+  // Mostrar índice por categorías, ordenado alfabéticamente por título
+  function mostrarDiscursoIndice() {
+    const indiceDiv = document.getElementById("indice-categorias");
+    indiceDiv.innerHTML = "";
+    const discursos = JSON.parse(localStorage.getItem("discursosJW") || "[]");
+    const filtroCategoria = document.getElementById("filterCategoria").value;
+    let filtrados = filtroCategoria ? discursos.filter(d => d.categoria === filtroCategoria) : discursos;
+
+    // Ordenar alfabeticamente
+    filtrados.sort((a,b) => a.titulo.localeCompare(b.titulo));
+
+    if (filtrados
