@@ -183,11 +183,61 @@ function mostrarDiscursos() {
       const span = document.createElement("span");
       span.textContent = d.titulo;
       span.className = "discurso-titulo";
-      span.onclick = () => alert(`Título: ${d.titulo}\nCategoría: ${d.categoria}\n\n${d.contenido}`);
+      span.onclick = () => abrirVistaPrevia(d);
       div.appendChild(span);
     });
     lista.appendChild(div);
   }
+}
+
+function abrirVistaPrevia(discurso) {
+  const nuevaVentana = window.open("", "_blank");
+  const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${discurso.titulo}</title>
+    <style>
+      body { background-color: #121212; color: #f0f0f0; font-family: 'Noto Sans', sans-serif; padding: 2rem; font-size: 18px; }
+      #contenido { margin-top: 1rem; }
+      button { margin: 1rem 0.5rem 0 0; padding: 0.5rem 1rem; font-size: 1rem; border: none; border-radius: 5px; cursor: pointer; }
+      .btn-azul { background-color: #1e88e5; color: white; }
+      .btn-rojo { background-color: #e53935; color: white; }
+    </style></head><body>
+    <h1>${discurso.titulo}</h1>
+    <div id="contenido">${discurso.contenido.replace(/\n/g, "<br>")}</div>
+    <br/>
+    <button class="btn-azul" id="aumentar">Aumentar letra</button>
+    <button class="btn-azul" id="reducir">Reducir letra</button>
+    <button class="btn-azul" id="editar">Editar</button>
+    <button class="btn-rojo" id="eliminar">Eliminar</button>
+    <button class="btn-azul" onclick="window.close()">Volver</button>
+    <script>
+      let fontSize = 18;
+      document.getElementById("aumentar").onclick = () => {
+        fontSize += 2;
+        document.getElementById("contenido").style.fontSize = fontSize + "px";
+      };
+      document.getElementById("reducir").onclick = () => {
+        fontSize -= 2;
+        document.getElementById("contenido").style.fontSize = fontSize + "px";
+      };
+      document.getElementById("editar").onclick = () => {
+        window.opener.document.getElementById("discurso-id").value = ${discurso.id};
+        window.opener.document.getElementById("titulo").value = `${discurso.titulo}`;
+        window.opener.document.getElementById("contenido").value = `${discurso.contenido}`;
+        window.opener.document.getElementById("categoria").value = `${discurso.categoria}`;
+        window.close();
+      };
+      document.getElementById("eliminar").onclick = () => {
+        if (confirm("¿Estás seguro de eliminar este discurso?")) {
+          const discursos = JSON.parse(window.opener.localStorage.getItem("discursos") || "[]").filter(d => d.id !== ${discurso.id});
+          window.opener.localStorage.setItem("discursos", JSON.stringify(discursos));
+          window.opener.mostrarDiscursos();
+          window.close();
+        }
+      };
+    </script>
+  </body></html>`;
+  nuevaVentana.document.open();
+  nuevaVentana.document.write(html);
+  nuevaVentana.document.close();
 }
 </script>
 </body>
