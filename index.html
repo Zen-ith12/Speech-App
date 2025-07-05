@@ -92,15 +92,13 @@
 <input type="hidden" id="discurso-id" />
 <input id="titulo" type="text" placeholder="Título del discurso" />
 <select id="categoria">
-  <option value="Publicos">Discurso Públicos</option>
-  <option value="Tesoros">Tesoros de la Biblia</option>
+  <option value="Publico">Discurso Público</option>
   <option value="Congregacion">Necesidades de la Congregación</option>
   <option value="Asamblea">Asamblea</option>
   <option value="FuneralMatrimonio">Funeral / Matrimonio</option>
 </select>
 
 <button onclick="guardarDiscurso()">Guardar discurso</button>
-<button onclick="eliminarDiscurso()">Eliminar discurso</button>
 
 <h2>Discursos guardados</h2>
 <div id="lista"></div>
@@ -138,22 +136,6 @@
     document.getElementById("titulo").value = "";
     document.getElementById("contenido").value = "";
     mostrarDiscursos();
-  }
-
-  function eliminarDiscurso() {
-    const titulo = document.getElementById("titulo").value.trim();
-    if (!titulo) return alert("Escriba el título del discurso que desea eliminar.");
-
-    let discursos = JSON.parse(localStorage.getItem("discursos") || "[]");
-    const inicial = discursos.length;
-    discursos = discursos.filter(d => d.titulo !== titulo);
-    if (discursos.length === inicial) {
-      alert("No se encontró un discurso con ese título.");
-    } else {
-      localStorage.setItem("discursos", JSON.stringify(discursos));
-      alert("Discurso eliminado.");
-      mostrarDiscursos();
-    }
   }
 
   function mostrarDiscursos() {
@@ -198,14 +180,14 @@
         const span = document.createElement("span");
         span.textContent = d.titulo;
         span.className = "discurso-titulo";
-        span.onclick = () => abrirLectura(d);
+        span.onclick = () => abrirVistaPrevia(d);
         div.appendChild(span);
       });
       lista.appendChild(div);
     }
   }
 
-  function abrirLectura(discurso) {
+  function abrirVistaPrevia(discurso) {
     const nuevaVentana = window.open("", "_blank");
     nuevaVentana.document.write(`
       <html><head><title>${discurso.titulo}</title>
@@ -213,14 +195,46 @@
         body { background-color: #121212; color: #f0f0f0; font-size: 18px; font-family: sans-serif; padding: 2rem; }
         button { margin: 1rem 0.5rem; padding: 0.5rem 1rem; font-size: 1rem; }
       </style>
+      <script>
+        let fontSize = 18;
+        function aumentarLetra() {
+          fontSize += 2;
+          document.getElementById('contenido').style.fontSize = fontSize + 'px';
+        }
+        function reducirLetra() {
+          fontSize -= 2;
+          document.getElementById('contenido').style.fontSize = fontSize + 'px';
+        }
+      </script>
       </head><body>
         <h1>${discurso.titulo}</h1>
         <div id="contenido">${discurso.contenido.replace(/\n/g, '<br>')}</div>
         <br>
-        <button onclick="document.body.style.fontSize = 'larger'">Aumentar letra</button>
-        <button onclick="document.body.style.fontSize = 'smaller'">Reducir letra</button>
+        <button onclick="aumentarLetra()">Aumentar letra</button>
+        <button onclick="reducirLetra()">Reducir letra</button>
+        <button onclick="window.opener.editarDiscursoDesdeLectura(${discurso.id}); window.close();">Editar</button>
+        <button onclick="if(confirm('¿Estás seguro de eliminar este discurso?')) { window.opener.eliminarDiscursoDesdeLectura(${discurso.id}); window.close(); }">Eliminar</button>
       </body></html>
     `);
+  }
+
+  function editarDiscursoDesdeLectura(id) {
+    const discursos = JSON.parse(localStorage.getItem("discursos") || "[]");
+    const discurso = discursos.find(d => d.id === id);
+    if (discurso) {
+      document.getElementById("discurso-id").value = discurso.id;
+      document.getElementById("titulo").value = discurso.titulo;
+      document.getElementById("contenido").value = discurso.contenido;
+      document.getElementById("categoria").value = discurso.categoria;
+    }
+  }
+
+  function eliminarDiscursoDesdeLectura(id) {
+    if (!confirm("¿Está seguro de que desea eliminar este discurso?")) return;
+    let discursos = JSON.parse(localStorage.getItem("discursos") || "[]");
+    discursos = discursos.filter(d => d.id !== id);
+    localStorage.setItem("discursos", JSON.stringify(discursos));
+    mostrarDiscursos();
   }
 </script>
 </body>
