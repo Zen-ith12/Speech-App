@@ -92,14 +92,15 @@
 <input type="hidden" id="discurso-id" />
 <input id="titulo" type="text" placeholder="Título del discurso" />
 <select id="categoria">
-  <option value="Publico">Discurso Público</option>
+  <option value="Publicos">Discurso Públicos</option>
+  <option value="Tesoros">Tesoros de la Biblia</option>
   <option value="Congregacion">Necesidades de la Congregación</option>
   <option value="Asamblea">Asamblea</option>
   <option value="FuneralMatrimonio">Funeral / Matrimonio</option>
 </select>
 
 <button onclick="guardarDiscurso()">Guardar discurso</button>
-<button onclick="arreglarDiscursos()">Arreglar discursos antiguos</button>
+<button onclick="eliminarDiscurso()">Eliminar discurso</button>
 
 <h2>Discursos guardados</h2>
 <div id="lista"></div>
@@ -139,6 +140,22 @@
     mostrarDiscursos();
   }
 
+  function eliminarDiscurso() {
+    const titulo = document.getElementById("titulo").value.trim();
+    if (!titulo) return alert("Escriba el título del discurso que desea eliminar.");
+
+    let discursos = JSON.parse(localStorage.getItem("discursos") || "[]");
+    const inicial = discursos.length;
+    discursos = discursos.filter(d => d.titulo !== titulo);
+    if (discursos.length === inicial) {
+      alert("No se encontró un discurso con ese título.");
+    } else {
+      localStorage.setItem("discursos", JSON.stringify(discursos));
+      alert("Discurso eliminado.");
+      mostrarDiscursos();
+    }
+  }
+
   function mostrarDiscursos() {
     const lista = document.getElementById("lista");
     const indiceCategorias = document.getElementById("indice-categorias");
@@ -152,14 +169,14 @@
     });
 
     for (const categoria in agrupados) {
+      const safeId = categoria.replace(/\s+/g, '-').toLowerCase();
       const item = document.createElement("div");
       item.textContent = categoria;
       item.style.cursor = "pointer";
       item.style.textDecoration = "underline";
       item.style.color = "#90caf9";
       item.onclick = () => {
-        console.log("Click en categoría:", categoria);
-        const seccion = document.getElementById("cat-" + categoria);
+        const seccion = document.getElementById("cat-" + safeId);
         if (seccion) {
           seccion.scrollIntoView({ behavior: "smooth" });
         } else {
@@ -170,9 +187,10 @@
     }
 
     for (const categoria in agrupados) {
+      const safeId = categoria.replace(/\s+/g, '-').toLowerCase();
       const div = document.createElement("div");
       div.className = "categoria";
-      div.id = "cat-" + categoria;
+      div.id = "cat-" + safeId;
       const h3 = document.createElement("h3");
       h3.textContent = categoria;
       div.appendChild(h3);
