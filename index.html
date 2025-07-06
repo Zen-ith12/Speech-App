@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>JW Speech</title>
-  <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#121212" />
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap" rel="stylesheet" />
   <style>
@@ -25,8 +24,8 @@
       margin: 0.5rem 0;
       padding: 0.5rem;
       border-radius: 5px;
-      border: none;
-      font-size: 1rem;
+      border: none; 
+    font-size: 1rem;
       box-sizing: border-box;
     }
     textarea {
@@ -57,14 +56,14 @@
   </style>
 </head>
 <body>
-  <h1>JW Speech</h1>
+  <h1>JW Speech</h1> 
 
   <div style="text-align:center;">
     <label>Tamaño de letra:
       <button onclick="cambiarTamanio('aumentar')">A+</button>
       <button onclick="cambiarTamanio('reducir')">A−</button>
     </label>
-    <br/> 
+    <br/>
     <label>Fuente:
       <select onchange="cambiarFuente(this.value)">
         <option value="'Noto Sans', sans-serif">Noto Sans</option>
@@ -74,13 +73,16 @@
       </select>
     </label>
   </div>
- <h2>Agregar discurso</h2>
+
+
+  <h2>Agregar discurso</h2>
   <input id="titulo" type="text" placeholder="Título del discurso" />
   <select id="categoria">
     <option value="Publicos">Discursos Públicos</option>
+    <option value="Tesoros">Tesoros de la Biblia</option>
+    <option value="Necesidades">Necesidades de la Congregación</option>
     <option value="Asamblea">Discursos Asamblea</option>
     <option value="FuneralMatrimonio">Discurso Funeral y Matrimonio</option>
-    <option value="Congregacion">Discursos para Necesidades de la Congregación</option>
   </select>
   <textarea id="contenido" placeholder="Contenido del discurso"></textarea>
   <button id="guardarBtn" onclick="guardarDiscurso()">Guardar</button>
@@ -88,19 +90,15 @@
 
   <h2>Mis discursos</h2>
   <div id="listaDiscursos"></div>
-  <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('./service-worker.js')
-        .then(reg => console.log('✅ Service Worker registrado:', reg.scope))
-        .catch(err => console.error('❌ Error al registrar el Service Worker:', err));
-    }
 
+  <script>
     let fontSize = 16;
     function cambiarTamanio(accion) {
       if (accion === 'aumentar') fontSize += 2;
       else if (accion === 'reducir') fontSize = Math.max(12, fontSize - 2);
       document.documentElement.style.setProperty('--tamanio-letra', fontSize + 'px');
     }
+
     function cambiarFuente(fuente) {
       document.body.style.fontFamily = fuente;
     }
@@ -108,13 +106,14 @@
     let editIndex = -1; // índice del discurso que se está editando
 
     function guardarDiscurso() {
+
       const titulo = document.getElementById('titulo').value.trim();
       const contenido = document.getElementById('contenido').value.trim();
       const categoria = document.getElementById('categoria').value;
       if (!titulo || !contenido) {
         alert("Por favor completa el título y el contenido.");
         return;
-        }
+      }
       const discursos = JSON.parse(localStorage.getItem('discursos') || '[]');
       discursos.push({ titulo, contenido, categoria, fecha: new Date().toISOString() });
       localStorage.setItem('discursos', JSON.stringify(discursos));
@@ -126,16 +125,15 @@
       const discursos = JSON.parse(localStorage.getItem('discursos') || '[]');
       const index = discursos.findIndex(d => d.titulo === titulo && d.categoria === categoria && d.fecha === fecha);
       if (index === -1) return alert("Discurso no encontrado.");
-      const d = discursos[index]; 
-    document.getElementById('titulo').value = d.titulo;
+      const d = discursos[index];
+      document.getElementById('titulo').value = d.titulo;
       document.getElementById('contenido').value = d.contenido;
       document.getElementById('categoria').value = d.categoria;
       editIndex = index;
       document.getElementById('guardarBtn').style.display = 'none';
       document.getElementById('actualizarBtn').style.display = 'inline-block';
       window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-
+        }
     function actualizarDiscurso() {
       const titulo = document.getElementById('titulo').value.trim();
       const contenido = document.getElementById('contenido').value.trim();
@@ -158,12 +156,6 @@
       document.getElementById('titulo').value = '';
       document.getElementById('contenido').value = '';
       document.getElementById('categoria').value = 'Publicos';
-        }
-
-    function limpiarFormulario() {
-      document.getElementById('titulo').value = '';
-      document.getElementById('contenido').value = '';
-      document.getElementById('categoria').value = 'Publicos';
     }
 
     function eliminarDiscursoPorTitulo(titulo, categoria, fecha) {
@@ -172,37 +164,53 @@
       discursos = discursos.filter(d => !(d.titulo === titulo && d.categoria === categoria && d.fecha === fecha));
       localStorage.setItem('discursos', JSON.stringify(discursos));
       mostrarDiscursos();
-        }
+}
 
     function exportarDiscursoPorTitulo(titulo, categoria, fecha) {
       const discursos = JSON.parse(localStorage.getItem('discursos') || '[]');
       const d = discursos.find(d => d.titulo === titulo && d.categoria === categoria && d.fecha === fecha);
       if (!d) return alert("Discurso no encontrado.");
-      const contenido = `Título: ${d.titulo}\nCategoría: ${d.categoria}\nFecha: ${new Date(d.fecha).toLocaleString()}\n\n${d.contenido}`;
+      const contenido = `Título: ${d.titulo}\\nCategoría: ${d.categoria}\\nFecha: ${new Date(d.fecha).toLocaleString()}\\n\\n${d.contenido}`;
       const blob = new Blob([contenido], { type: 'text/plain;charset=utf-8' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `${d.titulo.replace(/\s+/g, '_')}.txt`;
+      a.download = `${d.titulo.replace(/\\s+/g, '_')}.txt`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
     }
-    
+
     function verSoloLecturaPorTitulo(titulo, categoria, fecha) {
       const discursos = JSON.parse(localStorage.getItem('discursos') || '[]');
       const d = discursos.find(d => d.titulo === titulo && d.categoria === categoria && d.fecha === fecha);
       if (!d) return alert("Discurso no encontrado.");
-      const params = new URLSearchParams();
-      params.set('titulo', d.titulo);
-      params.set('categoria', d.categoria);
-      params.set('fecha', new Date(d.fecha).toLocaleString());
-      params.set('contenido', d.contenido);
-      window.open('modo-lectura.html?' + params.toString(), '_blank');
-        }
+      const url = window.URL.createObjectURL(new Blob([`
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Vista solo lectura: ${d.titulo}</title>
+<style>
+body { background: #121212; color: #f0f0f0; font-family: 'Noto Sans', sans-serif; padding: 2rem; max-width: 700px; margin: auto; white-space: pre-wrap; line-height: 1.6; }
+  h1 { text-align: center; margin-bottom: 0.3rem; }
+  small { display: block; text-align: center; margin-bottom: 1rem; color: #aaa; }
+</style>
+</head>
+<body>
+  <h1>${d.titulo}</h1>
+  <small>Categoría: ${d.categoria}</small>
+  <small>Fecha: ${new Date(d.fecha).toLocaleString()}</small>
+  <hr />
+  <div>${d.contenido.replace(/\\n/g, '<br>')}</div>
+</body>
+</html>
+      `], { type: 'text/html' }));
+      window.open(url, '_blank');
+    }
 
-    function mostrarDiscursos() {
+function mostrarDiscursos() {
       const lista = document.getElementById('listaDiscursos');
       lista.innerHTML = '';
       const discursos = JSON.parse(localStorage.getItem('discursos') || '[]');
@@ -215,7 +223,7 @@
       });
 
       // Mostrar por categoría
-    for (const cat in categorias) {
+      for (const cat in categorias) {
         const catDiv = document.createElement('div');
         const catTitulo = document.createElement('h2');
 
@@ -230,12 +238,12 @@
         catTitulo.textContent = nombreCat;
         catDiv.appendChild(catTitulo);
 
-      categorias[cat].slice().reverse().forEach(d => {
+categorias[cat].slice().reverse().forEach(d => {
           const div = document.createElement('div');
           div.className = 'discurso';
           div.innerHTML = `
             <h3>${d.titulo}</h3>
-            <p>${d.contenido.replace(/\n/g, '<br>')}</p>
+            <p>${d.contenido.replace(/\\n/g, '<br>')}</p>
             <small>${new Date(d.fecha).toLocaleString()}</small><br>
             <button class="delete-btn" onclick="eliminarDiscursoPorTitulo('${d.titulo}', '${d.categoria}', '${d.fecha}')">Eliminar</button>
             <button onclick="editarDiscursoPorTitulo('${d.titulo}', '${d.categoria}', '${d.fecha}')">Editar</button>
@@ -246,10 +254,12 @@
         });
 
         lista.appendChild(catDiv);
-    }
       }
+}
 
     mostrarDiscursos();
   </script>
 </body>
-</html> 
+</html>
+
+  
