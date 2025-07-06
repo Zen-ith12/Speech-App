@@ -191,7 +191,7 @@ function abrirVistaPrevia(discurso) {
           }
           #contenido {
           margin-top: 1rem;
-            white-space: pre-wrap;
+          white-space: pre-wrap;
           }
           button {
       margin: 1rem 0.5rem 0 0;
@@ -227,18 +227,21 @@ function abrirVistaPrevia(discurso) {
       fontSize += 2;
       contenido.style.fontSize = fontSize + 'px';
     };
+    
     document.getElementById('reducir').onclick = () => {
       if (fontSize > 10) {
         fontSize -= 2;
         contenido.style.fontSize = fontSize + 'px';
       }
     };
+    
     document.getElementById('reducir').onclick = () => {
       if (fontSize > 10) {
         fontSize -= 2;
         contenido.style.fontSize = fontSize + 'px';
       }
     };
+    
     document.getElementById('editar').onclick = () => {
       if (confirm('¿Deseas editar este discurso?')) {
         window.opener.document.getElementById('discurso-id').value = "${discurso.id}";
@@ -248,6 +251,7 @@ function abrirVistaPrevia(discurso) {
         window.close();
       }
     };
+    
     document.getElementById('eliminar').onclick = () => {
       if (confirm('¿Seguro que quieres eliminar este discurso?')) {
         const discursos = JSON.parse(window.opener.localStorage.getItem('discursos') || '[]').filter(d => d.id !== "${discurso.id}");
@@ -264,3 +268,4 @@ function abrirVistaPrevia(discurso) {
   nuevaVentana.document.write(html);
   nuevaVentana.document.close();
 }
+</script>
