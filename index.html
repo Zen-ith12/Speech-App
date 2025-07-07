@@ -188,13 +188,31 @@ for (const categoria in agrupados) {
         alert("Habilita las ventanas emergentes para esta página.");
         return;
       }
+      
       const html = `
-      <html><head><meta charset="UTF-8"><title>${discurso.titulo}</title>
-       
+      <!DOCTYPE html>
+  <html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>${discurso.titulo}</title>
         <style>
-        body { background-color: #121212; color: #f0f0f0; font-family: 'Noto Sans', sans-serif; padding: 2rem; font-size: 18px; }
-          #contenido { margin-top: 1rem; white-space: pre-wrap; }
-          button { margin: 1rem 0.5rem 0 0; padding: 0.5rem 1rem; font-size: 1rem; border: none; border-radius: 5px; cursor: pointer; }
+        body {
+        background-color: #121212;
+        color: #f0f0f0;
+        font-family: 'Noto Sans', sans-serif; 
+        padding: 2rem; 
+        font-size: 18px; 
+        }
+          #contenido { 
+          margin-top: 1rem; 
+          white-space: pre-wrap; }
+          button { 
+          margin: 1rem 0.5rem 0 0;
+          padding: 0.5rem 1rem; 
+          font-size: 1rem; 
+          border: none; border-radius: 5px; 
+          cursor: pointer; 
+          }
           .btn-azul { background-color: #1e88e5; color: white; }
           .btn-rojo { background-color: #e53935; color: white; }
         </style>
@@ -210,7 +228,7 @@ for (const categoria in agrupados) {
       
         <script>
         let fontSize = 18;
-          function cambiarTamano(delta) {
+        function cambiarTamano(delta) {
             fontSize += delta;
             document.getElementById('contenido').style.fontSize = fontSize + 'px';
           }
@@ -222,9 +240,9 @@ for (const categoria in agrupados) {
             window.close();
           }
           function eliminar() {
-          if (confirm("¿Eliminar este discurso?")) {
+            if (confirm("¿Eliminar este discurso?")) {
               const discursos = JSON.parse(window.opener.localStorage.getItem("discursos") || "[]")
-                                  .filter(d => d.id !== "${discurso.id}");
+                .filter(d => d.id !== "${discurso.id}");
               window.opener.localStorage.setItem("discursos", JSON.stringify(discursos));
               window.opener.mostrarDiscursos();
               window.close();
@@ -233,12 +251,13 @@ for (const categoria in agrupados) {
         </script>
       </body>
 </html> 
+
 <body>
 <script>
       nuevaVentana.document.open();
       nuevaVentana.document.write(html);
       nuevaVentana.document.close();
-}}
+  }
 
     window.addEventListener("DOMContentLoaded", () => {
       const fuenteGuardada = localStorage.getItem("fuenteApp");
