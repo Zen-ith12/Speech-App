@@ -210,8 +210,9 @@ function abrirVistaPrevia(discurso) {
     return;
   }
   
-  const contenidoHTML = `
+  const html = `
   <!DOCTYPE html>
+  <html lang="es">
   <head>
   <meta charset="UTF-8">
   <title>${discurso.titulo}</title>
@@ -242,6 +243,9 @@ function abrirVistaPrevia(discurso) {
         window.opener.document.getElementById("titulo").value = "${discurso.titulo}";
         window.opener.document.getElementById("contenido").value = \`${discurso.contenido}\`;
         window.opener.document.getElementById("categoria").value = "${discurso.categoria}";
+       if ("${discurso.categoria}" === "Publicos") {
+       window.opener.document.getElementById("numero-publico").value = "${discurso.numero || ''}";
+       }
         window.opener.mostrarCampoNumero();
         window.close();
       }
@@ -264,16 +268,33 @@ function abrirVistaPrevia(discurso) {
   nuevaVentana.document.close();
 }
 
+  // Agrega este campo al cambiar de categoría: 
+function mostrarCampoNumero() {
+  const categoria = document.getElementById("categoria").value;
+  let campo = document.getElementById("numero-publico");
+  if (categoria === "Publicos") {
+    if (!campo) {
+      const input = document.createElement("input");
+      input.type = "text";
+      input.placeholder = "Número del discurso público";
+      input.id = "numero-publico";
+      input.style.marginBottom = "0.5rem";
+      document.getElementById("categoria").insertAdjacentElement("afterend", input);
+    }
+  } else {
+    if (campo) campo.remove();
+  }
+}
+
+document.getElementById("categoria").addEventListener("change", mostrarCampoNumero);
+
 window.addEventListener("DOMContentLoaded", () => {
   const fuenteGuardada = localStorage.getItem("fuenteApp");
   if (fuenteGuardada) {
     document.body.style.setProperty("--fuente-app", fuenteGuardada);
     document.getElementById("fuente").value = fuenteGuardada;
   }
-  
   mostrarCampoNumero();
   mostrarDiscursos();
 });
 </script>
-</body>
-</html>
