@@ -17,7 +17,7 @@
     h1 {
       text-align: center;
       color: #6a1b9a; /* Morado JW Library */
-      }
+    }
     input, textarea, select, button {
       width: 100%;
       margin: 0.5rem 0;
@@ -31,10 +31,9 @@
       background-color: #1e1e1e;
       color: #f0f0f0;
     }
-    textarea {
-      height: 250px;
+    height: 250px;
       resize: vertical;
-font-weight: bold;
+      font-weight: bold;
     }
     button {
       background-color: #1e88e5;
@@ -68,7 +67,7 @@ font-weight: bold;
       margin-top: 2rem;
       background-color: #1e1e1e;
       padding: 1rem;
-border-radius: 8px;
+      border-radius: 8px;
     }
   </style>
 </head>
@@ -102,7 +101,7 @@ border-radius: 8px;
     <div id="indice-categorias"></div>
   </div>
 
-<script>
+  <script>
     function cambiarFuente() {
       const fuente = document.getElementById("fuente").value;
       document.body.style.setProperty("--fuente-app", fuente);
@@ -137,7 +136,7 @@ border-radius: 8px;
       const lista = document.getElementById("lista");
       const indiceCategorias = document.getElementById("indice-categorias");
       lista.innerHTML = "";
-indiceCategorias.innerHTML = "";
+      indiceCategorias.innerHTML = "";
 
       const discursos = JSON.parse(localStorage.getItem("discursos") || "[]");
       const agrupados = {};
@@ -145,8 +144,8 @@ indiceCategorias.innerHTML = "";
         if (!agrupados[d.categoria]) agrupados[d.categoria] = [];
         agrupados[d.categoria].push(d);
       });
-      
-for (const categoria in agrupados) {
+
+    for (const categoria in agrupados) {
         const safeId = categoria.replace(/\s+/g, '-').toLowerCase();
         const item = document.createElement("div");
         item.textContent = categoria;
@@ -158,9 +157,9 @@ for (const categoria in agrupados) {
           if (seccion) seccion.scrollIntoView({ behavior: "smooth" });
         };
         indiceCategorias.appendChild(item);
-}
+      }
 
-  for (const categoria in agrupados) {
+    for (const categoria in agrupados) {
         const safeId = categoria.replace(/\s+/g, '-').toLowerCase();
         const div = document.createElement("div");
         div.className = "categoria";
@@ -188,78 +187,73 @@ for (const categoria in agrupados) {
         alert("Habilita las ventanas emergentes para esta página.");
         return;
       }
-      
+
       const html = `
-      <!DOCTYPE html>
-  <html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <title>${discurso.titulo}</title>
-        <style>
-        body {
-        background-color: #121212;
-        color: #f0f0f0;
-        font-family: 'Noto Sans', sans-serif; 
-        padding: 2rem; 
-        font-size: 18px; 
-        }
-          #contenido { 
-          margin-top: 1rem; 
-          white-space: pre-wrap; }
-          button { 
-          margin: 1rem 0.5rem 0 0;
-          padding: 0.5rem 1rem; 
-          font-size: 1rem; 
-          border: none; border-radius: 5px; 
-          cursor: pointer; 
-          }
-          .btn-azul { background-color: #1e88e5; color: white; }
-          .btn-rojo { background-color: #e53935; color: white; }
-        </style>
+        <!DOCTYPE html>
+        <html lang="es">
+        <head>
+        <meta charset="UTF-8">
+          <title>${discurso.titulo}</title>
+          <style>
+            body {
+              background-color: #121212;
+              color: #f0f0f0;
+              font-family: 'Noto Sans', sans-serif;
+              padding: 2rem;
+              font-size: 18px;
+            }
+            #contenido { margin-top: 1rem; white-space: pre-wrap; }
+            button {
+            margin: 1rem 0.5rem 0 0;
+              padding: 0.5rem 1rem;
+              font-size: 1rem;
+              border: none;
+              border-radius: 5px;
+              cursor: pointer;
+            }
+            .btn-azul { background-color: #1e88e5; color: white; }
+            .btn-rojo { background-color: #e53935; color: white; }
+          </style>
         </head>
-      <body>
+        <body>
         <h1>${discurso.titulo}</h1>
-        <div id="contenido">${discurso.contenido.replace(/\n/g, "<br>")}</div>
-        <button class="btn-azul" onclick="cambiarTamano(2)">Aumentar letra</button>
-        <button class="btn-azul" onclick="cambiarTamano(-2)">Reducir letra</button>
-        <button class="btn-morado" onclick="editar()">Editar</button>
-        <button class="btn-rojo" onclick="eliminar()">Eliminar</button>
-        <button class="btn-amarillo" onclick="window.close()">Cerrar</button>
-      
-        <script>
-        let fontSize = 18;
-        function cambiarTamano(delta) {
-            fontSize += delta;
-            document.getElementById('contenido').style.fontSize = fontSize + 'px';
-          }
-          function editar() {
+          <div id="contenido">${discurso.contenido.replace(/\n/g, "<br>")}</div>
+          <button class="btn-azul" onclick="cambiarTamano(2)">Aumentar letra</button>
+          <button class="btn-azul" onclick="cambiarTamano(-2)">Reducir letra</button>
+          <button class="btn-azul" onclick="editar()">Editar</button>
+          <button class="btn-rojo" onclick="eliminar()">Eliminar</button>
+          <button class="btn-azul" onclick="window.close()">Cerrar</button>
+          <script>
+            let fontSize = 18;
+            function cambiarTamano(delta) {
+              fontSize += delta;
+              document.getElementById('contenido').style.fontSize = fontSize + 'px';
+            }
+            function editar() {
             window.opener.document.getElementById("discurso-id").value = "${discurso.id}";
-            window.opener.document.getElementById("titulo").value = "${discurso.titulo}";
-            window.opener.document.getElementById("contenido").value = \`${discurso.contenido}\`;
-            window.opener.document.getElementById("categoria").value = "${discurso.categoria}";
-            window.close();
-          }
-          function eliminar() {
-            if (confirm("¿Eliminar este discurso?")) {
-              const discursos = JSON.parse(window.opener.localStorage.getItem("discursos") || "[]")
-                .filter(d => d.id !== "${discurso.id}");
-              window.opener.localStorage.setItem("discursos", JSON.stringify(discursos));
-              window.opener.mostrarDiscursos();
+              window.opener.document.getElementById("titulo").value = "${discurso.titulo}";
+              window.opener.document.getElementById("contenido").value = \`${discurso.contenido}\`;
+              window.opener.document.getElementById("categoria").value = "${discurso.categoria}";
               window.close();
             }
-          }
-        </script>
-      </body>
-</html> 
-`;
+            function eliminar() {
+              if (confirm("¿Eliminar este discurso?")) {
+                const discursos = JSON.parse(window.opener.localStorage.getItem("discursos") || "[]")
+                  .filter(d => d.id !== "${discurso.id}");
+                window.opener.localStorage.setItem("discursos", JSON.stringify(discursos));
+                window.opener.mostrarDiscursos();
+                window.close();
+              }
+            }
+          </script>
+          </body>
+        </html>
+      `;
 
-<html>
-  <body>
-<script>
       nuevaVentana.document.open();
       nuevaVentana.document.write(html);
       nuevaVentana.document.close();
-  }
+    }
 
     window.addEventListener("DOMContentLoaded", () => {
       const fuenteGuardada = localStorage.getItem("fuenteApp");
@@ -269,6 +263,6 @@ for (const categoria in agrupados) {
       }
       mostrarDiscursos();
     });
-  </script>
+    </script>
 </body>
 </html>
