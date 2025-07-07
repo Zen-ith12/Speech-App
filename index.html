@@ -97,6 +97,7 @@
     <option value="FuneralMatrimonio">Funeral / Matrimonio</option>
     <option value="Pastoreo">Visitas de Pastoreo</option>
   </select>
+    <input id="numero-publico" type="number" placeholder="Número del discurso público" style="display: none;" />
   <textarea id="contenido" placeholder="Contenido del discurso..."></textarea>
   <button onclick="guardarDiscurso()">Guardar discurso</button>
 
@@ -126,6 +127,7 @@ function mostrarCampoNumero() {
   const titulo = document.getElementById("titulo").value.trim();
   const contenido = document.getElementById("contenido").value.trim();
   const categoria = document.getElementById("categoria").value;
+  const numero = categoria === "Publicos" && !document.getElementById("discurso-id").value ? document.getElementById("numero-publico").value.trim() : null;
 
   if (!titulo || !contenido || !categoria || (categoria === "Publicos" && !document.getElementById("discurso-id").value && !numero)) {
     alert("Debe completar todos los campos.");
@@ -141,7 +143,7 @@ function mostrarCampoNumero() {
   document.getElementById("contenido").value = "";
   document.getElementById("discurso-id").value = "";
   document.getElementById("categoria").value = "Publicos";
-    
+  document.getElementById("numero-publico").value = ""; 
   mostrarCampoNumero();
   mostrarDiscursos();
   alert("Discurso guardado.");
@@ -261,8 +263,9 @@ function abrirVistaPrevia(discurso) {
         window.opener.document.getElementById("titulo").value = "${discurso.titulo}";
         window.opener.document.getElementById("contenido").value = \`${discurso.contenido}\`;
         window.opener.document.getElementById("categoria").value = "${discurso.categoria}";
+        window.opener.mostrarCampoNumero(); 
         window.close();
-  }
+      }
       
       function eliminar() {
       if (confirm("¿Eliminar este discurso?")) {
