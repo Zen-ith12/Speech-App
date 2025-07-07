@@ -204,7 +204,10 @@
               padding: 2rem;
               font-size: 18px;
             }
-            #contenido { margin-top: 1rem; white-space: pre-wrap; }
+            #contenido { 
+            margin-top: 1rem; 
+            white-space: pre-wrap;
+            }
             button {
               margin: 1rem 0.5rem 0 0;
               padding: 0.5rem 1rem;
@@ -232,6 +235,7 @@
               fontSize += delta;
               document.getElementById('contenido').style.fontSize = fontSize + 'px';
             }
+            
             function editar() {
               window.opener.document.getElementById("discurso-id").value = "${discurso.id}";
               window.opener.document.getElementById("titulo").value = "${discurso.titulo}";
@@ -239,6 +243,7 @@
               window.opener.document.getElementById("categoria").value = "${discurso.categoria}";
               window.close();
             }
+            
             function eliminar() {
               if (confirm("¿Eliminar este discurso?")) {
                 const discursos = JSON.parse(window.opener.localStorage.getItem("discursos") || "[]")
