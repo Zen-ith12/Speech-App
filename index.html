@@ -16,7 +16,7 @@
     }
     h1 {
       text-align: center;
-      color: #6a1b9a;
+      color: #6a1b9a; /* Morado JW Library */
     }
     input, textarea, select, button {
       width: 100%;
@@ -53,6 +53,7 @@
       padding: 0.5rem;
       border-radius: 5px;
       margin-bottom: 0.5rem;
+       display: block; 
     }
     .categoria {
       margin-top: 1.5rem;
@@ -220,6 +221,8 @@
             .btn-rojo { background-color: #e53935; color: white; }
           </style>
         </head>
+        </body>
+        
         <body>
           <h1>${discurso.titulo}</h1>
           <div id="contenido">${discurso.contenido.replace(/\n/g, "<br>")}</div>
