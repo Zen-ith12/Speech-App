@@ -119,7 +119,6 @@ function cambiarFuente() {
 function mostrarCampoNumero() {
   const categoria = document.getElementById("categoria").value;
   const esNuevo = !document.getElementById("discurso-id").value;
-  document.getElementById("numero-publico").style.display = (categoria === "Publicos" && esNuevo) ? "block" : "none";
 }
 
   function guardarDiscurso() {
@@ -127,11 +126,6 @@ function mostrarCampoNumero() {
   const titulo = document.getElementById("titulo").value.trim();
   const contenido = document.getElementById("contenido").value.trim();
   const categoria = document.getElementById("categoria").value;
-  const numero = categoria === "Publicos" && !document.getElementById("discurso-id").value ? document.getElementById("numero-publico").value.trim() : null;
-
-  if (!titulo || !contenido || !categoria || (categoria === "Publicos" && !document.getElementById("discurso-id").value && !numero)) {
-    alert("Debe completar todos los campos.");
-    return;
     }
 
   let discursos = JSON.parse(localStorage.getItem("discursos") || "[]");
@@ -143,8 +137,6 @@ function mostrarCampoNumero() {
   document.getElementById("contenido").value = "";
   document.getElementById("discurso-id").value = "";
   document.getElementById("categoria").value = "Publicos";
-  document.getElementById("numero-publico").value = ""; 
-  mostrarCampoNumero();
   mostrarDiscursos();
   alert("Discurso guardado.");
   }
@@ -263,7 +255,6 @@ function abrirVistaPrevia(discurso) {
         window.opener.document.getElementById("titulo").value = "${discurso.titulo}";
         window.opener.document.getElementById("contenido").value = \`${discurso.contenido}\`;
         window.opener.document.getElementById("categoria").value = "${discurso.categoria}";
-        window.opener.mostrarCampoNumero(); 
         window.close();
       }
       
@@ -286,33 +277,12 @@ function abrirVistaPrevia(discurso) {
   nuevaVentana.document.close();
 }
 
-  // Agrega este campo al cambiar de categoría: 
-function mostrarCampoNumero() {
-  const categoria = document.getElementById("categoria").value;
-  let campo = document.getElementById("numero-publico");
-  if (categoria === "Publicos") {
-    if (!campo) {
-      const input = document.createElement("input");
-      input.type = "text";
-      input.placeholder = "Número del discurso público";
-      input.id = "numero-publico";
-      input.style.marginBottom = "0.5rem";
-      document.getElementById("categoria").insertAdjacentElement("afterend", input);
-    }
-  } else {
-    if (campo) campo.remove();
-  }
-}
-
-document.getElementById("categoria").addEventListener("change", mostrarCampoNumero);
-
 window.addEventListener("DOMContentLoaded", () => {
   const fuenteGuardada = localStorage.getItem("fuenteApp");
   if (fuenteGuardada) {
     document.body.style.setProperty("--fuente-app", fuenteGuardada);
     document.getElementById("fuente").value = fuenteGuardada;
   }
-  mostrarCampoNumero();
   mostrarDiscursos();
 });
 </script>
