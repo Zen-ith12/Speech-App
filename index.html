@@ -215,14 +215,30 @@ function abrirVistaPrevia(discurso) {
   <!DOCTYPE html>
   <html lang="es">
   <head>
-  <meta charset="UTF-8">
+    <meta charset="UTF-8" />
   <title>${discurso.titulo}</title>
     <style>
-      body { background-color: #121212; color: #f0f0f0; font-family: 'Noto Sans', sans-serif; padding: 2rem; font-size: 18px; }
-      #contenido { margin-top: 1rem; white-space: pre-wrap; }
-      button { margin: 1rem 0.5rem 0 0; padding: 0.5rem 1rem; font-size: 1rem; border: none; border-radius: 5px; cursor: pointer; }
-      .btn-azul { background-color: #1e88e5; color: white; }
-      .btn-rojo { background-color: #e53935; color: white; }
+      body { 
+        background-color: #121212; 
+        color: #f0f0f0; 
+        font-family: 'Noto Sans', sans-serif;
+        padding: 2rem; 
+        font-size: 18px; 
+      }
+      #contenido { 
+        margin-top: 1rem; 
+        white-space: pre-wrap;
+      }
+      button { 
+        margin: 1rem 0.5rem 0 0; 
+        padding: 0.5rem 1rem; 
+        font-size: 1rem; 
+        border: none; 
+        border-radius: 5px;
+        cursor: pointer;
+      }
+       .btn-azul { background-color: #1e88e5; color: white; }
+       .btn-rojo { background-color: #e53935; color: white; }
     </style>
     </head>
     <body>
@@ -233,23 +249,24 @@ function abrirVistaPrevia(discurso) {
     <button class="btn-azul" onclick="editar()">Editar</button>
     <button class="btn-rojo" onclick="eliminar()">Eliminar</button>
     <button class="btn-azul" onclick="window.close()">Cerrar</button>
+   
     <script>
-    let fontSize = 18;
+      let fontSize = 18;
+      
       function cambiarTamano(delta) {
         fontSize += delta;
         document.getElementById('contenido').style.fontSize = fontSize + 'px';
       }
+      
       function editar() {
         window.opener.document.getElementById("discurso-id").value = "${discurso.id}";
         window.opener.document.getElementById("titulo").value = "${discurso.titulo}";
         window.opener.document.getElementById("contenido").value = \`${discurso.contenido}\`;
         window.opener.document.getElementById("categoria").value = "${discurso.categoria}";
-       if ("${discurso.categoria}" === "Publicos") {
-       window.opener.document.getElementById("numero-publico").value = "${discurso.numero || ''}";
-       }
-        window.opener.mostrarCampoNumero();
+        window.opener.document.getElementById("numero-publico").value = "${discurso.numero || ""}";
         window.close();
-      }
+  }
+      
       function eliminar() {
       if (confirm("¿Eliminar este discurso?")) {
           const discursos = JSON.parse(window.opener.localStorage.getItem("discursos") || "[]")
