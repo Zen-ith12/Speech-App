@@ -224,7 +224,11 @@
         
         <body>
           <h1>${discurso.titulo}</h1>
-          <div id="contenido">${discurso.contenido.replace(/\n/g, "<br>")}</div>
+          <div id="contenido">${discurso.contenido.replace(/\n/g, "<br>")}
+          </div>
+
+          <br>
+          
           <button class="btn-azul" onclick="cambiarTamano(2)">Aumentar letra</button>
           <button class="btn-azul" onclick="cambiarTamano(-2)">Reducir letra</button>
           <button class="btn-azul" onclick="editar()">Editar</button>
@@ -237,6 +241,7 @@
               fontSize += delta;
               document.getElementById('contenido').style.fontSize = fontSize + 'px';
             }
+            
             function editar() {
               window.opener.document.getElementById("discurso-id").value = "${discurso.id}";
               window.opener.document.getElementById("titulo").value = "${discurso.titulo}";
@@ -244,6 +249,7 @@
               window.opener.document.getElementById("categoria").value = "${discurso.categoria}";
               window.close();
             }
+            
             function eliminar() {
               if (confirm("¿Eliminar este discurso?")) {
                 const discursos = JSON.parse(window.opener.localStorage.getItem("discursos") || "[]")
@@ -255,8 +261,7 @@
             }
           <\/script>
         </body>
-        </html>
-      `;
+        </html> `;
 
       nuevaVentana.document.open();
       nuevaVentana.document.write(html);
