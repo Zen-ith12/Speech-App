@@ -53,7 +53,6 @@
       padding: 0.5rem;
       border-radius: 5px;
       margin-bottom: 0.5rem;
-       display: block; 
     }
     .categoria {
       margin-top: 1.5rem;
@@ -135,7 +134,7 @@
       alert("Discurso guardado.");
     }
 
-    function mostrarDiscursos() {
+    function mostrarDiscursos(filtro = "") {
       const lista = document.getElementById("lista");
       const indiceCategorias = document.getElementById("indice-categorias");
       lista.innerHTML = "";
@@ -238,7 +237,6 @@
               fontSize += delta;
               document.getElementById('contenido').style.fontSize = fontSize + 'px';
             }
-            
             function editar() {
               window.opener.document.getElementById("discurso-id").value = "${discurso.id}";
               window.opener.document.getElementById("titulo").value = "${discurso.titulo}";
@@ -246,7 +244,6 @@
               window.opener.document.getElementById("categoria").value = "${discurso.categoria}";
               window.close();
             }
-            
             function eliminar() {
               if (confirm("¿Eliminar este discurso?")) {
                 const discursos = JSON.parse(window.opener.localStorage.getItem("discursos") || "[]")
