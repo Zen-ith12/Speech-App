@@ -186,10 +186,6 @@
 
     function abrirVistaPrevia(discurso) {
       const nuevaVentana = window.open("", "_blank", "resizable=yes,scrollbars=yes");
-      if (!nuevaVentana) {
-        alert("Habilita las ventanas emergentes para esta página.");
-        return;
-      }
 
       const html = `
         <!DOCTYPE html>
@@ -199,11 +195,11 @@
           <meta name="viewport" content="width=device-width, initial-scale=1">
           <title>${discurso.titulo}</title>
           <style>
-              body {
+            body {
                  background-color: #121212;
                  color: #f0f0f0;
                  font-family: 'Noto Sans', sans-serif;
-                 padding: 1rem;
+                 padding: 1rem; 
                  font-size: 1rem;
           
             }
@@ -234,10 +230,9 @@
           <button class="btn-azul" onclick="editar()">Editar</button>
           <button class="btn-rojo" onclick="eliminar()">Eliminar</button>
           <button class="btn-azul" onclick="window.close()">Cerrar</button>
-
           <script>
+          
             let fontSize = 16;
-            
             function cambiarTamano(delta) {
                 fontSize += delta;
                 document.getElementById('contenido').style.fontSize = fontSize + 'px';
@@ -279,5 +274,8 @@
         document.getElementById("fuente").value = fuenteGuardada;
       }
       mostrarDiscursos();
-});
-</script>
+    });
+  </script>
+ </body>
+</html> 
+  <
