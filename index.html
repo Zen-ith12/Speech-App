@@ -129,7 +129,7 @@
       document.getElementById("titulo").value = "";
       document.getElementById("contenido").value = "";
       document.getElementById("discurso-id").value = "";
-      document.getElementById("categoria").value = "Publicos";
+      document.getElementById("categoria").selectedIndex = 0;
       
       mostrarDiscursos();
       alert("Discurso guardado.");
@@ -183,7 +183,8 @@
 
         lista.appendChild(div);
       }
-  
+   }
+    
     function abrirVistaPrevia(discurso) {
     const nuevaVentana = window.open("", "_blank", "width=600,height=700,resizable=yes,scrollbars=yes");
 
@@ -241,10 +242,7 @@ function cambiarTamano(delta) {
   document.getElementById('contenido').style.fontSize = fontSize + 'px';
 }
 function editar() {
-  if (!window.opener) {
-    alert('No se puede acceder a la página principal.');
-    return;
-  }
+  if (!window.opener) return;
   window.opener.document.getElementById('discurso-id').value = "${discurso.id}";
   window.opener.document.getElementById('titulo').value = "${discurso.titulo.replace(/"/g, '&quot;')}";
   window.opener.document.getElementById('contenido').value = \`${discurso.contenido.replace(/`/g, '\\`')}\`;
@@ -252,10 +250,7 @@ function editar() {
   window.close();
 }
 function eliminar() {
-  if (!window.opener) {
-    alert('No se puede acceder a la página principal.');
-    return;
-  }
+  if (!window.opener) return;
   if (confirm('¿Quieres eliminar este discurso?')) {
     let discursos = JSON.parse(window.opener.localStorage.getItem('discursos') || '[]');
     discursos = discursos.filter(d => d.id !== "${discurso.id}");
@@ -283,5 +278,3 @@ function eliminar() {
     mostrarDiscursos();
   });
 </script>
-</body>
-</html> 
