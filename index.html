@@ -184,7 +184,7 @@
     }
 
     function abrirVistaPrevia(discurso) {
-      const nuevaVentana = window.open("", "_blank");
+      const nuevaVentana = window.open("", "_blank", "width=600,height=700,resizable=yes,scrollbars=yes");
       if (!nuevaVentana) {
         alert("Habilita las ventanas emergentes para esta página.");
         return;
@@ -194,36 +194,45 @@
         <!DOCTYPE html>
         <html lang="es">
         <head>
-          <meta charset="UTF-8" />
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=2, maximum-scale=1">
           <title>${discurso.titulo}</title>
           <style>
             body {
               background-color: #121212;
               color: #f0f0f0;
               font-family: 'Noto Sans', sans-serif;
-              padding: 2rem;
-              font-size: 18px;
+              padding: 5vw;
+              font-size: 1.1rem;
+              line-height: 1.6;
+              max-width: 90vw;
+              margin: auto;
             }
             #contenido { 
-            margin-top: 1rem; 
-            white-space: pre-wrap;
+                margin-top: 1rem; 
+                white-space: pre-wrap;
+                word-wrap: break-word;
             }
             button {
-              margin: 1rem 0.5rem 0 0;
-              padding: 0.5rem 1rem;
-              font-size: 1rem;
-              border: none;
-              border-radius: 5px;
-              cursor: pointer;
+                margin: 1rem 0.5rem 0 0;
+                padding: 0.8rem 1.2rem;
+                font-size: 1rem;
+                border: none;
+                border-radius: 6px;
+                cursor: pointer;
             }
             .btn-azul { background-color: #1e88e5; color: white; }
             .btn-rojo { background-color: #e53935; color: white; }
+
+            @media (max-width: 768px) {
+               body { font-size: 1rem; padding: 4vw; }
+               button { width: 100%; margin: 0.5rem 0; }
+            }
           </style>
         </head>
-      
         <body>
-          <h1>${discurso.titulo}</h1>
-          <div id="contenido">${discurso.contenido.replace(/\n/g, "<br>")}</div>
+            <h1>${discurso.titulo}</h1>
+            <div id="contenido">${discurso.contenido.replace(/\n/g, "<br>")}</div>
 
           <br>
           
@@ -235,12 +244,17 @@
 
           <script>
             let fontSize = 18;
+            
             function cambiarTamano(delta) {
-              fontSize += delta;
-              document.getElementById('contenido').style.fontSize = fontSize + 'px';
+                fontSize += delta;
+                document.getElementById('contenido').style.fontSize = fontSize + 'px';
             }
             
             function editar() {
+                if (!window.oponer) {
+                    alert("No se puede acceder a la ventana principal".);
+                    return;
+              }
               window.opener.document.getElementById("discurso-id").value = "${discurso.id}";
               window.opener.document.getElementById("titulo").value = "${discurso.titulo}";
               window.opener.document.getElementById("contenido").value = "${discurso.contenido}";
@@ -249,22 +263,27 @@
             }
             
             function eliminar() {
+              if (!window.oponer) {
+                  alert("No se puede acceder a la ventana principal.");
+                  return;
+              }    
               if (confirm("¿Eliminar este discurso?")) {
-                const discursos = JSON.parse(window.opener.localStorage.getItem("discursos") || "[]")
-                  .filter(d => d.id !== "${discurso.id}");
+                  const discursos = JSON.parse(window.opener.localStorage.getItem("discursos") || "[]")
+                      .filter(d => d.id !== "${discurso.id}");
                 window.opener.localStorage.setItem("discursos", JSON.stringify(discursos));
                 window.opener.mostrarDiscursos();
                 window.close();
               }
-            }
-          <\/script>
-        </body>
-        </html> `;
+          }
+      <\/script>
+    </body>
+   </html>
+  `;
 
-      nuevaVentana.document.open();
-      nuevaVentana.document.write(html);
-      nuevaVentana.document.close();
-    }
+   nuevaVentana.document.open();
+   nuevaVentana.document.write(html);
+   nuevaVentana.document.close();
+}
 
     window.addEventListener("DOMContentLoaded", () => {
       const fuenteGuardada = localStorage.getItem("fuenteApp");
