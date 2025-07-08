@@ -197,7 +197,7 @@
           <meta charset="UTF-8" />
           <title>${discurso.titulo}</title>
           <style>
-            <body> {
+            body {
               background-color: #121212;
               color: #f0f0f0;
               font-family: 'Noto Sans', sans-serif;
@@ -220,12 +220,10 @@
             .btn-rojo { background-color: #e53935; color: white; }
           </style>
         </head>
-        </body>
-        
+      
         <body>
           <h1>${discurso.titulo}</h1>
-          <div id="contenido">${discurso.contenido.replace(/\n/g, "<br>")}
-          </div>
+          <div id="contenido">${discurso.contenido.replace(/\n/g, "<br>")}</div>
 
           <br>
           
@@ -245,7 +243,7 @@
             function editar() {
               window.opener.document.getElementById("discurso-id").value = "${discurso.id}";
               window.opener.document.getElementById("titulo").value = "${discurso.titulo}";
-              window.opener.document.getElementById("contenido").value = \`${discurso.contenido}\`;
+              window.opener.document.getElementById("contenido").value = "${discurso.contenido}";
               window.opener.document.getElementById("categoria").value = "${discurso.categoria}";
               window.close();
             }
