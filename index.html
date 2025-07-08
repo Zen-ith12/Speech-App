@@ -295,3 +295,11 @@
    nuevaVentana.document.write(html);
    nuevaVentana.document.close();
 }
+window.addEventListener("DOMContentLoaded", () => {
+      const fuenteGuardada = localStorage.getItem("fuenteApp");
+      if (fuenteGuardada) {
+        document.body.style.setProperty("--fuente-app", fuenteGuardada);
+        document.getElementById("fuente").value = fuenteGuardada;
+      }
+      mostrarDiscursos();
+    });
