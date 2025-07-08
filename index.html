@@ -187,12 +187,23 @@
     function abrirVistaPrevia(discurso) {
       const nuevaVentana = window.open("", "_blank", "resizable=yes,scrollbars=yes");
 
-      const html = `
+      if (nuevaVentana) {
+         alert("Habilita las ventanas emergentes para esta página.");
+         return;
+      }
+      
+      const contenidoEscapado = discurso.contenido 
+         .replace(/\\/g, "\\\\")
+         .replace(/ˋ/g, "\\ˋ")
+         .replace/\$/g, "\\$")
+         .replace(/\n/g, "<br>")
+          
+      const html = ˋ
         <!DOCTYPE html>
         <html lang="es">
         <head>
-          <meta charset="UTF-8">
-          <meta name="viewport" content="width=device-width, initial-scale=1">
+          <meta charset="UTF-8" />
+          <meta name="viewport" content="width=device-width, initial-scale=1" />
           <title>${discurso.titulo}</title>
           <style>
             body {
@@ -200,17 +211,16 @@
                  color: #f0f0f0;
                  font-family: 'Noto Sans', sans-serif;
                  padding: 1rem; 
-                 font-size: 1rem;
-          
+                 font-size: 16px;
             }
             #contenido { 
                 margin-top: 1rem; 
                 white-space: pre-wrap;
+                font-size: 16px;
             }
             button {
                 margin: 0.5rem 0.3rem 0 0;
                 padding: 0.5rem 1rem;
-                font-size: 1rem;
                 border: none;
                 border-radius: 5px;
                 cursor: pointer;
@@ -221,61 +231,67 @@
         </head>
         <body>
             <h1>${discurso.titulo}</h1>
-            <div id="contenido">${discurso.contenido.replace(/\n/g, "<br>")}</div>
-
-          <br>
-          
-          <button class="btn-azul" onclick="cambiarTamano(2)">Aumentar letra</button>
-          <button class="btn-azul" onclick="cambiarTamano(-2)">Reducir letra</button>
-          <button class="btn-azul" onclick="editar()">Editar</button>
-          <button class="btn-rojo" onclick="eliminar()">Eliminar</button>
-          <button class="btn-azul" onclick="window.close()">Cerrar</button>
+            <div id="contenido">${contenidoEscapado}</div>
+          <button class="btn-azul" id="btnAumentar">Aumentar letra</button>
+          <button class="btn-azul" id="btnReducir">Reducir letra</button>
+          <button class="btn-azul" id="btnEditar()">Editar</button>
+          <button class="btn-rojo" id="btnEliminar()">Eliminar</button>
+          <button class="btn-azul" id="btnWindow.close()">Cerrar</button>
+            
           <script>
-          
+            (function() {
             let fontSize = 16;
-            function cambiarTamano(delta) {
-                fontSize += delta;
-                document.getElementById('contenido').style.fontSize = fontSize + 'px';
-            }
+            const contenido = document.getElementById('contenido');
+              
+            document.getElementById('btnAumentar').addEventListener('click' () => {
+                fontSize += 2;
+                contenido.style.fontSize = fontSize + 'px';
+            });
+
+            document.getElementById('btnReducir').addEventListener('click', () => {
+                if(fontSize > 8) {
+                  fontSize -= 2;
+                  contenido.style.fontSize = fontSize + 'px';
+                }
+            });
+
+            document.getElementById('btnCerrar').addEventListener('click', () => {
+              window.close();
+            });
             
-            function editar() {
-                if (!window.oponer) return;
+              document.getElementById('btnEditar').addEventListener('click', () => {
+                if (!window.oponer) {
+                alert("No se puede acceder a la ventana principal.");
+                  return;
+                }
                 window.opener.document.getElementById("discurso-id").value = "${discurso.id}";
-                window.opener.document.getElementById("titulo").value = "${discurso.titulo}";
-                window.opener.document.getElementById("contenido").value = "${discurso.contenido}";
+                window.opener.document.getElementById("titulo").value = \ˋ"${discurso.titulo.replace(/ˋ/g, ˋ\\ˋ')}\ˋ;
+                window.opener.document.getElementById("contenido").value = \ˋ"${discurso.contenido.replace(/ˋ/g, '\\ˋ')}\ˋ;
                 window.opener.document.getElementById("categoria").value = "${discurso.categoria}";
+                window.focus();
                 window.close();
-            }
+            });
             
-            function eliminar() {
-              if (!window.oponer) return;
+              document.getElementById('btnEliminar').addEventListener('click', ()=> {
+              if (!window.oponer)
+                 alert("No se puede acceder a la ventana principal.");
+                return;
+              }
               if (confirm("¿Quieres eliminar este discurso?")) {
-                  const discursos = JSON.parse(window.opener.localStorage.getItem("discursos") || "[]")
-                      .filter(d => d.id !== "${discurso.id}");
+                  let discursos = JSON.parse(window.opener.localStorage.getItem("discursos") || "[]")
+                  discursos = discurso.filter(d => d.id !== "${discurso.id}");
                 window.opener.localStorage.setItem("discursos", JSON.stringify(discursos));
                 window.opener.mostrarDiscursos();
                 window.close();
               }
-          }
+          });
+        })();
          <\/script>
-   </body>
-   </html>
+       </body>
+       </html>
   `;
 
    nuevaVentana.document.open();
    nuevaVentana.document.write(html);
    nuevaVentana.document.close();
 }
-
-    window.addEventListener("DOMContentLoaded", () => {
-      const fuenteGuardada = localStorage.getItem("fuenteApp");
-      if (fuenteGuardada) {
-        document.body.style.setProperty("--fuente-app", fuenteGuardada);
-        document.getElementById("fuente").value = fuenteGuardada;
-      }
-      mostrarDiscursos();
-    });
-  </script>
- </body>
-</html> 
-  <
