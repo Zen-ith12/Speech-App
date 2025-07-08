@@ -115,8 +115,6 @@
       const titulo = document.getElementById("titulo").value.trim();
       const contenido = document.getElementById("contenido").value.trim();
       const categoria = document.getElementById("categoria").value;
-
-      console.log(Guardando:", { id, titulo, contenido, categoria });
       
       if (!titulo || !contenido || !categoria) {
         alert("Debe completar todos los campos.");
@@ -132,6 +130,7 @@
       document.getElementById("contenido").value = "";
       document.getElementById("discurso-id").value = "";
       document.getElementById("categoria").value = "Publicos";
+      
       mostrarDiscursos();
       alert("Discurso guardado.");
     }
@@ -186,7 +185,7 @@
     }
 
     function abrirVistaPrevia(discurso) {
-      const nuevaVentana = window.open("", "_blank", resizable=yes,scrollbars=yes");
+      const nuevaVentana = window.open("", "_blank", "resizable=yes,scrollbars=yes");
       if (!nuevaVentana) {
         alert("Habilita las ventanas emergentes para esta página.");
         return;
