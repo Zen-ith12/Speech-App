@@ -116,6 +116,8 @@
       const contenido = document.getElementById("contenido").value.trim();
       const categoria = document.getElementById("categoria").value;
 
+      console.log(Guardando:", { id, titulo, contenido, categoria });
+      
       if (!titulo || !contenido || !categoria) {
         alert("Debe completar todos los campos.");
         return;
